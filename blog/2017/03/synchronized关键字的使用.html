@@ -1,0 +1,849 @@
+<!doctype html>
+
+
+
+  
+
+
+<html class="theme-next mist use-motion" lang="zh-Hans">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+  
+  
+  
+  
+
+  
+    
+    
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+    
+    
+    <link href="//fonts.googleapis.com/css?family=Lato:300,300italic,400,400italic,700,700italic&subset=latin,latin-ext" rel="stylesheet" type="text/css">
+  
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.1.0" rel="stylesheet" type="text/css" />
+
+
+  <meta name="keywords" content="多线程," />
+
+
+
+
+
+  <link rel="alternate" href="/atom.xml" title="Maintel-编程记" type="application/atom+xml" />
+
+
+
+
+  <link rel="shortcut icon" type="image/x-icon" href="/favicon.ico?v=5.1.0" />
+
+
+
+
+
+
+<meta name="description" content="主要讲synchronized关键字的用法和不同之处">
+<meta name="keywords" content="多线程">
+<meta property="og:type" content="article">
+<meta property="og:title" content="synchronized关键字的使用">
+<meta property="og:url" content="https://maintel.github.io/blog/2017/03/synchronized关键字的使用.html">
+<meta property="og:site_name" content="Maintel-编程记">
+<meta property="og:description" content="主要讲synchronized关键字的用法和不同之处">
+<meta property="og:updated_time" content="2017-06-25T02:59:55.675Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="synchronized关键字的使用">
+<meta name="twitter:description" content="主要讲synchronized关键字的用法和不同之处">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Mist',
+    sidebar: {"position":"left","display":"post","offset":12,"offset_float":0,"b2t":false,"scrollpercent":false},
+    fancybox: true,
+    motion: true,
+    duoshuo: {
+      userId: 'undefined',
+      author: '博主'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="https://maintel.github.io/blog/2017/03/synchronized关键字的使用.html"/>
+
+
+
+
+
+  <title> synchronized关键字的使用 | Maintel-编程记 </title>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+
+
+
+
+
+  <script type="text/javascript">
+    var _hmt = _hmt || [];
+    (function() {
+      var hm = document.createElement("script");
+      hm.src = "https://hm.baidu.com/hm.js?3e7db1112f6e1fe650d6ace646c9e4e3";
+      var s = document.getElementsByTagName("script")[0];
+      s.parentNode.insertBefore(hm, s);
+    })();
+  </script>
+
+
+
+
+
+
+
+
+
+
+  
+  
+    
+  
+
+  <div class="container one-collumn sidebar-position-left page-post-detail ">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/"  class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">Maintel-编程记</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle"></p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories/index.html" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br />
+            
+            分类
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-about">
+          <a href="/about" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-user"></i> <br />
+            
+            关于
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives/index.html" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />
+            
+            归档
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags/index.html" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-tags"></i> <br />
+            
+            标签
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
+    <link itemprop="mainEntityOfPage" href="https://maintel.github.io/blog/2017/03/synchronized关键字的使用.html">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="Maintel">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.jpg">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Maintel-编程记">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+            
+            
+              
+                synchronized关键字的使用
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2017-03-30T17:01:21+08:00">
+                2017-03-30
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/android技术/" itemprop="url" rel="index">
+                    <span itemprop="name">android技术</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <p><strong>主要讲<code>synchronized</code>关键字的用法和不同之处</strong></p>
+<a id="more"></a> 
+<h1 id="开启多线程"><a href="#开启多线程" class="headerlink" title="开启多线程"></a>开启多线程</h1><p>有三个线程<code>ThreadTest1</code>、<code>ThreadTest2</code>、<code>ThreadTest3</code>:<br><figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div><div class="line">40</div><div class="line">41</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">ThreadTest1</span> <span class="keyword">extends</span> <span class="title">Thread</span> </span>&#123;</div><div class="line"></div><div class="line">    SynchronizedTest synchronizedTest;</div><div class="line"></div><div class="line">    <span class="function"><span class="keyword">public</span> <span class="title">ThreadTest1</span><span class="params">(SynchronizedTest synchronizedTest)</span> </span>&#123;</div><div class="line">        <span class="keyword">this</span>.synchronizedTest = synchronizedTest;</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    <span class="meta">@Override</span></div><div class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">run</span><span class="params">()</span> </span>&#123;</div><div class="line">        synchronizedTest.test();</div><div class="line">    &#125;</div><div class="line">&#125;</div><div class="line"></div><div class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">ThreadTest2</span> <span class="keyword">extends</span> <span class="title">Thread</span> </span>&#123;</div><div class="line"></div><div class="line">    SynchronizedTest synchronizedTest;</div><div class="line"></div><div class="line">    <span class="function"><span class="keyword">public</span> <span class="title">ThreadTest2</span><span class="params">(SynchronizedTest synchronizedTest)</span> </span>&#123;</div><div class="line">        <span class="keyword">this</span>.synchronizedTest = synchronizedTest;</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    <span class="meta">@Override</span></div><div class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">run</span><span class="params">()</span> </span>&#123;</div><div class="line">        synchronizedTest.test();</div><div class="line">    &#125;</div><div class="line">&#125;</div><div class="line"></div><div class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">ThreadTest3</span> <span class="keyword">extends</span> <span class="title">Thread</span> </span>&#123;</div><div class="line"></div><div class="line">    SynchronizedTest synchronizedTest;</div><div class="line"></div><div class="line">    <span class="function"><span class="keyword">public</span> <span class="title">ThreadTest3</span><span class="params">(SynchronizedTest synchronizedTest)</span> </span>&#123;</div><div class="line">        <span class="keyword">this</span>.synchronizedTest = synchronizedTest;</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    <span class="meta">@Override</span></div><div class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">run</span><span class="params">()</span> </span>&#123;</div><div class="line">        synchronizedTest.test();</div><div class="line">    &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure></p>
+<p>调用一个对象：<br><figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">SynchronizedTest</span> </span>&#123;</div><div class="line">    String anyString = <span class="string">""</span>;</div><div class="line"></div><div class="line">    <span class="function"><span class="keyword">public</span> <span class="title">SynchronizedTest</span><span class="params">(String anyString)</span> </span>&#123;</div><div class="line">        <span class="keyword">this</span>.anyString = anyString;</div><div class="line">    &#125;</div><div class="line"></div><div class="line">   <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">test</span><span class="params">()</span> </span>&#123;</div><div class="line">        <span class="keyword">try</span> &#123;</div><div class="line">            System.out.println(<span class="string">"线程名称为："</span> + Thread.currentThread().getName()</div><div class="line">                    + <span class="string">"在"</span> + System.currentTimeMillis() + <span class="string">"进入同步块"</span>);</div><div class="line">            Thread.sleep(<span class="number">3000</span>);</div><div class="line">            System.out.println(<span class="string">"线程名称为："</span> + Thread.currentThread().getName()</div><div class="line">                    + <span class="string">"在"</span> + System.currentTimeMillis() + <span class="string">"离开同步块"</span>);</div><div class="line">        &#125; <span class="keyword">catch</span> (InterruptedException e) &#123;</div><div class="line">            e.printStackTrace();</div><div class="line">        &#125;</div><div class="line">    &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure></p>
+<p>启动线程：<br><figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div></pre></td><td class="code"><pre><div class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">threadStart</span><span class="params">()</span> </span>&#123;</div><div class="line">       SynchronizedTest synchronizedTest = <span class="keyword">new</span> SynchronizedTest(<span class="string">"maintel"</span>);</div><div class="line">       ThreadTest1 threadTest1 = <span class="keyword">new</span> ThreadTest1(synchronizedTest);</div><div class="line">       threadTest1.setName(<span class="string">"thread1"</span>);</div><div class="line">       threadTest1.start();</div><div class="line">       ThreadTest2 threadTest2 = <span class="keyword">new</span> ThreadTest2(synchronizedTest);</div><div class="line">       threadTest2.setName(<span class="string">"thread2"</span>);</div><div class="line">       threadTest2.start();</div><div class="line">       ThreadTest3 threadTest3 = <span class="keyword">new</span> ThreadTest3(synchronizedTest);</div><div class="line">       threadTest3.setName(<span class="string">"thread3"</span>);</div><div class="line">       threadTest3.start();</div><div class="line">   &#125;</div></pre></td></tr></table></figure></p>
+<h1 id="先看看非安全线程的实例"><a href="#先看看非安全线程的实例" class="headerlink" title="先看看非安全线程的实例"></a>先看看非安全线程的实例</h1><p>即上面代码的输出：</p>
+<pre><code>I/System.out: 线程名称为：thread1在1490859330653进入同步块
+I/System.out: 线程名称为：thread2在1490859330654进入同步块
+I/System.out: 线程名称为：thread3在1490859330657进入同步块
+I/System.out: 线程名称为：thread1在1490859333654离开同步块
+I/System.out: 线程名称为：thread2在1490859333654离开同步块
+I/System.out: 线程名称为：thread3在1490859333657离开同步块
+</code></pre><p>可以看到方法同时被调用，是线程不安全的。</p>
+<h1 id="使用synchronized关键字修饰方法"><a href="#使用synchronized关键字修饰方法" class="headerlink" title="使用synchronized关键字修饰方法"></a>使用<code>synchronized</code>关键字修饰方法</h1><p>修改如下：<br><figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div></pre></td><td class="code"><pre><div class="line"><span class="function"><span class="keyword">synchronized</span> <span class="keyword">public</span> <span class="keyword">void</span> <span class="title">test</span><span class="params">()</span> </span>&#123;   <span class="comment">//  &lt;&lt;========</span></div><div class="line">        <span class="keyword">try</span> &#123;</div><div class="line">            System.out.println(<span class="string">"线程名称为："</span> + Thread.currentThread().getName()</div><div class="line">                    + <span class="string">"在"</span> + System.currentTimeMillis() + <span class="string">"进入同步块"</span>);</div><div class="line">            Thread.sleep(<span class="number">3000</span>);</div><div class="line">            System.out.println(<span class="string">"线程名称为："</span> + Thread.currentThread().getName()</div><div class="line">                    + <span class="string">"在"</span> + System.currentTimeMillis() + <span class="string">"离开同步块"</span>);</div><div class="line">        &#125; <span class="keyword">catch</span> (InterruptedException e) &#123;</div><div class="line">            e.printStackTrace();</div><div class="line">        &#125;</div><div class="line">    &#125;</div></pre></td></tr></table></figure></p>
+<p>再看看输入：</p>
+<pre><code>I/System.out: 线程名称为：thread1在1490859832827进入同步块
+I/System.out: 线程名称为：thread1在1490859835827离开同步块
+I/System.out: 线程名称为：thread3在1490859835828进入同步块
+I/System.out: 线程名称为：thread3在1490859838828离开同步块
+I/System.out: 线程名称为：thread2在1490859838828进入同步块
+I/System.out: 线程名称为：thread2在1490859841829离开同步块
+</code></pre><p>可以看到线程顺序执行，当一个线程执行完毕下一个线程才会进入，因此是线程安全的。</p>
+<p>这里获取的锁是SynchronizedTest的对象实例的锁—对象锁。</p>
+<h1 id="多个对象多个锁"><a href="#多个对象多个锁" class="headerlink" title="多个对象多个锁"></a>多个对象多个锁</h1><p><code>threadTest()</code>方法修改如下：<br><figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div></pre></td><td class="code"><pre><div class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">threadStart</span><span class="params">()</span> </span>&#123;</div><div class="line">        SynchronizedTest synchronizedTest = <span class="keyword">new</span> SynchronizedTest(<span class="string">"maintel"</span>);</div><div class="line">        SynchronizedTest synchronizedTest2 = <span class="keyword">new</span> SynchronizedTest(<span class="string">"maintel2"</span>);  <span class="comment">//&lt;&lt;==========</span></div><div class="line">        ThreadTest1 threadTest1 = <span class="keyword">new</span> ThreadTest1(synchronizedTest);</div><div class="line">        threadTest1.setName(<span class="string">"thread1"</span>);</div><div class="line">        threadTest1.start();</div><div class="line">        ThreadTest2 threadTest2 = <span class="keyword">new</span> ThreadTest2(synchronizedTest2);            <span class="comment">//&lt;&lt;=============</span></div><div class="line">        threadTest2.setName(<span class="string">"thread2"</span>);</div><div class="line">        threadTest2.start();</div><div class="line">        ThreadTest3 threadTest3 = <span class="keyword">new</span> ThreadTest3(synchronizedTest);</div><div class="line">        threadTest3.setName(<span class="string">"thread3"</span>);</div><div class="line">        threadTest3.start();</div><div class="line">    &#125;</div></pre></td></tr></table></figure></p>
+<p>输出：</p>
+<pre><code>I/System.out: 线程名称为：thread2在1490860191946进入同步块
+I/System.out: 线程名称为：thread1在1490860191950进入同步块
+I/System.out: 线程名称为：thread2在1490860194947离开同步块
+I/System.out: 线程名称为：thread1在1490860194957离开同步块
+I/System.out: 线程名称为：thread3在1490860194957进入同步块
+I/System.out: 线程名称为：thread3在1490860197958离开同步块
+</code></pre><p>可以看到线程2和线程1同时进入方法，因为<code>thread1</code>和<code>thread3</code>获取的是<code>synchronizedTest</code>的对象锁，而<code>thread2</code>获取的是<code>synchronizedTest2</code>的对象锁，两者不存在同步问题。</p>
+<h1 id="同步块synchronized-this"><a href="#同步块synchronized-this" class="headerlink" title="同步块synchronized (this)"></a>同步块<code>synchronized (this)</code></h1><p>将<code>test()</code>方法修改如下：<br><figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div></pre></td><td class="code"><pre><div class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">test</span><span class="params">()</span> </span>&#123;</div><div class="line">        <span class="keyword">try</span> &#123;</div><div class="line">            <span class="keyword">synchronized</span> (<span class="keyword">this</span>) &#123;     <span class="comment">//&lt;&lt;==========</span></div><div class="line">                System.out.println(<span class="string">"线程名称为："</span> + Thread.currentThread().getName()</div><div class="line">                        + <span class="string">"在"</span> + System.currentTimeMillis() + <span class="string">"进入同步块"</span>);</div><div class="line">                Thread.sleep(<span class="number">3000</span>);</div><div class="line">                System.out.println(<span class="string">"线程名称为："</span> + Thread.currentThread().getName()</div><div class="line">                        + <span class="string">"在"</span> + System.currentTimeMillis() + <span class="string">"离开同步块"</span>);</div><div class="line">            &#125;</div><div class="line">        &#125; <span class="keyword">catch</span> (InterruptedException e) &#123;</div><div class="line">            e.printStackTrace();</div><div class="line">        &#125;</div><div class="line">    &#125;</div></pre></td></tr></table></figure></p>
+<p>输入为：</p>
+<pre><code>I/System.out: 线程名称为：thread1在1490860807697进入同步块
+I/System.out: 线程名称为：thread1在1490860810698离开同步块
+I/System.out: 线程名称为：thread2在1490860810699进入同步块
+I/System.out: 线程名称为：thread2在1490860813699离开同步块
+I/System.out: 线程名称为：thread3在1490860813700进入同步块
+I/System.out: 线程名称为：thread3在1490860816700离开同步块
+</code></pre><p>可以看到同样是同步执行的，这里线程获取的是<code>synchronized (this)</code>括号中的对象锁，这里就是<code>synchronizedTest</code>的对象锁。</p>
+<h1 id="同步块synchronized-非this对象"><a href="#同步块synchronized-非this对象" class="headerlink" title="同步块synchronized (非this对象)"></a>同步块<code>synchronized (非this对象)</code></h1><p>修改<code>test()</code>方法如下：<br><figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div></pre></td><td class="code"><pre><div class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">test</span><span class="params">()</span> </span>&#123;</div><div class="line">    <span class="keyword">try</span> &#123;</div><div class="line">        <span class="keyword">synchronized</span> (anyString) &#123;    <span class="comment">//&lt;&lt;==================</span></div><div class="line">            System.out.println(<span class="string">"线程名称为："</span> + Thread.currentThread().getName()</div><div class="line">                    + <span class="string">"在"</span> + System.currentTimeMillis() + <span class="string">"进入同步块"</span>);</div><div class="line">            Thread.sleep(<span class="number">3000</span>);</div><div class="line">            System.out.println(<span class="string">"线程名称为："</span> + Thread.currentThread().getName()</div><div class="line">                    + <span class="string">"在"</span> + System.currentTimeMillis() + <span class="string">"离开同步块"</span>);</div><div class="line">        &#125;</div><div class="line">    &#125; <span class="keyword">catch</span> (InterruptedException e) &#123;</div><div class="line">        e.printStackTrace();</div><div class="line">    &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure></p>
+<p>输出：</p>
+<pre><code>I/System.out: 线程名称为：thread1在1490861540167进入同步块
+I/System.out: 线程名称为：thread1在1490861543168离开同步块
+I/System.out: 线程名称为：thread2在1490861543168进入同步块
+I/System.out: 线程名称为：thread2在1490861546169离开同步块
+I/System.out: 线程名称为：thread3在1490861546169进入同步块
+I/System.out: 线程名称为：thread3在1490861549169离开同步块
+</code></pre><p>可以看到同样是同步执行的，这里线程获取的是<code>synchronized (anyString)</code>括号中的对象锁，这里就是<code>anyString</code>的对象锁。</p>
+<h1 id="类中存在两个不同的同步方法会怎么样？"><a href="#类中存在两个不同的同步方法会怎么样？" class="headerlink" title="类中存在两个不同的同步方法会怎么样？"></a>类中存在两个不同的同步方法会怎么样？</h1><p>增加一个方法<code>test2()</code>:<br><figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div></pre></td><td class="code"><pre><div class="line"><span class="function"><span class="keyword">synchronized</span> <span class="keyword">public</span> <span class="keyword">void</span> <span class="title">test2</span><span class="params">()</span> </span>&#123;</div><div class="line">        <span class="keyword">try</span> &#123;</div><div class="line">            System.out.println(<span class="string">"test2  线程名称为："</span> + Thread.currentThread().getName()</div><div class="line">                    + <span class="string">"在"</span> + System.currentTimeMillis() + <span class="string">"进入同步块"</span>);</div><div class="line">            Thread.sleep(<span class="number">3000</span>);</div><div class="line">            System.out.println(<span class="string">"test2  线程名称为："</span> + Thread.currentThread().getName()</div><div class="line">                    + <span class="string">"在"</span> + System.currentTimeMillis() + <span class="string">"离开同步块"</span>);</div><div class="line">        &#125; <span class="keyword">catch</span> (InterruptedException e) &#123;</div><div class="line">            e.printStackTrace();</div><div class="line">        &#125;</div><div class="line">    &#125;</div></pre></td></tr></table></figure></p>
+<p>修改线程2为：<br><figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line"><span class="meta">@Override</span></div><div class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">run</span><span class="params">()</span> </span>&#123;</div><div class="line">    synchronizedTest.test2();</div><div class="line">&#125;</div></pre></td></tr></table></figure></p>
+<p>此时运行输出为：</p>
+<pre><code>I/System.out: test2  线程名称为：thread2在1490862104089进入同步块
+I/System.out: 线程名称为：thread3在1490862104091进入同步块
+I/System.out: test2  线程名称为：thread2在1490862107090离开同步块
+I/System.out: 线程名称为：thread3在1490862107092离开同步块
+I/System.out: 线程名称为：thread1在1490862107092进入同步块
+I/System.out: 线程名称为：thread1在1490862110092离开同步块
+</code></pre><p>可以看到线程1和3是顺序执行的，线程2却是同时执行的，因为上面<code>test2()</code>方法被修饰以后，线程2获取到对象锁是<code>synchronizedTest</code>的，而线程1和3调用的是<code>test()</code>方法，获取到的是<code>anyString</code>的对象锁，两者并不冲突。</p>
+<h1 id="同步块synchronized-xxx-class"><a href="#同步块synchronized-xxx-class" class="headerlink" title="同步块synchronized (xxx.class)"></a>同步块<code>synchronized (xxx.class)</code></h1><p><code>SynchronizedTest</code>中<code>test()</code>和<code>test2()</code>方法分别如下：<br><figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div></pre></td><td class="code"><pre><div class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">test</span><span class="params">()</span> </span>&#123;</div><div class="line">    <span class="keyword">try</span> &#123;</div><div class="line">        <span class="keyword">synchronized</span> (<span class="keyword">this</span>) &#123;                    <span class="comment">//&lt;&lt;=============</span></div><div class="line">            System.out.println(<span class="string">"线程名称为："</span> + Thread.currentThread().getName()</div><div class="line">                    + <span class="string">"在"</span> + System.currentTimeMillis() + <span class="string">"进入同步块"</span>);</div><div class="line">            Thread.sleep(<span class="number">3000</span>);</div><div class="line">            System.out.println(<span class="string">"线程名称为："</span> + Thread.currentThread().getName()</div><div class="line">                    + <span class="string">"在"</span> + System.currentTimeMillis() + <span class="string">"离开同步块"</span>);</div><div class="line">        &#125;</div><div class="line">    &#125; <span class="keyword">catch</span> (InterruptedException e) &#123;</div><div class="line">        e.printStackTrace();</div><div class="line">    &#125;</div><div class="line">&#125;</div><div class="line"></div><div class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">test2</span><span class="params">()</span> </span>&#123;</div><div class="line">    <span class="keyword">try</span> &#123;</div><div class="line">        <span class="keyword">synchronized</span> (SynchronizedTest.class) &#123;   <span class="comment">//&lt;&lt;==============</span></div><div class="line">            System.out.println(<span class="string">"test2  线程名称为："</span> + Thread.currentThread().getName()</div><div class="line">                    + <span class="string">"在"</span> + System.currentTimeMillis() + <span class="string">"进入同步块"</span>);</div><div class="line">            Thread.sleep(<span class="number">3000</span>);</div><div class="line">            System.out.println(<span class="string">"test2  线程名称为："</span> + Thread.currentThread().getName()</div><div class="line">                    + <span class="string">"在"</span> + System.currentTimeMillis() + <span class="string">"离开同步块"</span>);</div><div class="line">        &#125;</div><div class="line">    &#125; <span class="keyword">catch</span> (InterruptedException e) &#123;</div><div class="line">        e.printStackTrace();</div><div class="line">    &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure></p>
+<p>此时线程2调用<code>test2()</code>方法，线程1和3调用<code>test()</code>方法，来看看输出如下：</p>
+<pre><code>I/System.out: test2  线程名称为：thread2在1490867370183进入同步块
+I/System.out: 线程名称为：thread1在1490867370184进入同步块
+I/System.out: test2  线程名称为：thread2在1490867373184离开同步块
+I/System.out: 线程名称为：thread1在1490867373185离开同步块
+I/System.out: 线程名称为：thread3在1490867373185进入同步块
+I/System.out: 线程名称为：thread3在1490867376185离开同步块
+</code></pre><p>可以看到1和3顺序执行，2却同时执行了，为什么呢？原因在于：</p>
+<p><strong>直接xxx.class锁是属于直接类的，而this是属于对象锁</strong></p>
+<p>这里关系到JVM虚拟机的一些机制，以后再做讨论。</p>
+<h1 id="对静态方法使用锁和普通锁的不同之处"><a href="#对静态方法使用锁和普通锁的不同之处" class="headerlink" title="对静态方法使用锁和普通锁的不同之处"></a>对静态方法使用锁和普通锁的不同之处</h1><p><code>SynchronizedTest</code>中<code>test()</code>和<code>test2()</code>方法分别如下：<br><figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div></pre></td><td class="code"><pre><div class="line"><span class="function"><span class="keyword">synchronized</span> <span class="keyword">public</span> <span class="keyword">void</span> <span class="title">test</span><span class="params">()</span> </span>&#123;</div><div class="line">    <span class="keyword">try</span> &#123;</div><div class="line">            System.out.println(<span class="string">"线程名称为："</span> + Thread.currentThread().getName()</div><div class="line">                    + <span class="string">"在"</span> + System.currentTimeMillis() + <span class="string">"进入同步块"</span>);</div><div class="line">            Thread.sleep(<span class="number">3000</span>);</div><div class="line">            System.out.println(<span class="string">"线程名称为："</span> + Thread.currentThread().getName()</div><div class="line">                    + <span class="string">"在"</span> + System.currentTimeMillis() + <span class="string">"离开同步块"</span>);</div><div class="line">    &#125; <span class="keyword">catch</span> (InterruptedException e) &#123;</div><div class="line">        e.printStackTrace();</div><div class="line">    &#125;</div><div class="line">&#125;</div><div class="line"></div><div class="line"><span class="function"><span class="keyword">synchronized</span> <span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">test2</span><span class="params">()</span> </span>&#123;</div><div class="line">    <span class="keyword">try</span> &#123;</div><div class="line">        System.out.println(<span class="string">"test2  线程名称为："</span> + Thread.currentThread().getName()</div><div class="line">                + <span class="string">"在"</span> + System.currentTimeMillis() + <span class="string">"进入同步块"</span>);</div><div class="line">        Thread.sleep(<span class="number">3000</span>);</div><div class="line">        System.out.println(<span class="string">"test2  线程名称为："</span> + Thread.currentThread().getName()</div><div class="line">                + <span class="string">"在"</span> + System.currentTimeMillis() + <span class="string">"离开同步块"</span>);</div><div class="line">    &#125; <span class="keyword">catch</span> (InterruptedException e) &#123;</div><div class="line">        e.printStackTrace();</div><div class="line">    &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure></p>
+<p>同样线程2调用<code>test2()</code>方法，线程1和3调用<code>test()</code>方法，来看看输出如下：</p>
+<pre><code>I/System.out: test2  线程名称为：thread2在1490866857936进入同步块
+I/System.out: 线程名称为：thread3在1490866857938进入同步块
+I/System.out: test2  线程名称为：thread2在1490866860936离开同步块
+I/System.out: 线程名称为：thread3在1490866860939离开同步块
+I/System.out: 线程名称为：thread1在1490866860939进入同步块
+I/System.out: 线程名称为：thread1在1490866863939离开同步块
+</code></pre><p>可以看到1和3线程顺序执行，线程2却同时执行了，这里就是锁普通方法和静态方法的区别，如同上面使用直接类和对象的区别：</p>
+<p><strong>静态方法的锁和xxx.class锁是一样的直接属于类</strong></p>
+<p>到此结束，自己学习使用过程中的一些练习和理解，不对之处还请指出。还有一些更深入的关于获取锁对象的机制等问题，以后再做研究。</p>
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/多线程/" rel="tag"># 多线程</a>
+          
+        </div>
+      
+
+      
+        
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/blog/2017/03/Restful初见.html" rel="next" title="Restful初见">
+                <i class="fa fa-chevron-left"></i> Restful初见
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/blog/2017/03/android单元测试遇到的问题.html" rel="prev" title="android单元测试遇到的问题">
+                android单元测试遇到的问题 <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+          
+          </div>
+          
+
+
+          
+  <div class="comments" id="comments">
+    
+  </div>
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap" >
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+          <img class="site-author-image" itemprop="image"
+               src="/images/avatar.jpg"
+               alt="Maintel" />
+          <p class="site-author-name" itemprop="name">Maintel</p>
+           
+              <p class="site-description motion-element" itemprop="description">IT 小工</p>
+          
+        </div>
+        <nav class="site-state motion-element">
+
+          
+            <div class="site-state-item site-state-posts">
+              <a href="/archives/index.html">
+                <span class="site-state-item-count">9</span>
+                <span class="site-state-item-name">日志</span>
+              </a>
+            </div>
+          
+
+          
+            
+            
+            <div class="site-state-item site-state-categories">
+              <a href="/categories/index.html">
+                <span class="site-state-item-count">4</span>
+                <span class="site-state-item-name">分类</span>
+              </a>
+            </div>
+          
+
+          
+            
+            
+            <div class="site-state-item site-state-tags">
+              <a href="/tags/index.html">
+                <span class="site-state-item-count">7</span>
+                <span class="site-state-item-name">标签</span>
+              </a>
+            </div>
+          
+
+        </nav>
+
+        
+          <div class="feed-link motion-element">
+            <a href="/atom.xml" rel="alternate">
+              <i class="fa fa-rss"></i>
+              RSS
+            </a>
+          </div>
+        
+
+        <div class="links-of-author motion-element">
+          
+            
+              <span class="links-of-author-item">
+                <a href="https://github.com/maintel" target="_blank" title="GitHub">
+                  
+                    <i class="fa fa-fw fa-github"></i>
+                  
+                  GitHub
+                </a>
+              </span>
+            
+          
+        </div>
+
+        
+        
+
+        
+        
+          <div class="links-of-blogroll motion-element links-of-blogroll-inline">
+            <div class="links-of-blogroll-title">
+              <i class="fa  fa-fw fa-globe"></i>
+              友情链接
+            </div>
+            <ul class="links-of-blogroll-list">
+              
+                <li class="links-of-blogroll-item">
+                  <a href="http://www.maintel.cn" title="maintel" target="_blank">maintel</a>
+                </li>
+              
+                <li class="links-of-blogroll-item">
+                  <a href="http://www.github.com" title="GitHub" target="_blank">GitHub</a>
+                </li>
+              
+            </ul>
+          </div>
+        
+
+        
+
+
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#开启多线程"><span class="nav-number">1.</span> <span class="nav-text">开启多线程</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#先看看非安全线程的实例"><span class="nav-number">2.</span> <span class="nav-text">先看看非安全线程的实例</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#使用synchronized关键字修饰方法"><span class="nav-number">3.</span> <span class="nav-text">使用synchronized关键字修饰方法</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#多个对象多个锁"><span class="nav-number">4.</span> <span class="nav-text">多个对象多个锁</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#同步块synchronized-this"><span class="nav-number">5.</span> <span class="nav-text">同步块synchronized (this)</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#同步块synchronized-非this对象"><span class="nav-number">6.</span> <span class="nav-text">同步块synchronized (非this对象)</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#类中存在两个不同的同步方法会怎么样？"><span class="nav-number">7.</span> <span class="nav-text">类中存在两个不同的同步方法会怎么样？</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#同步块synchronized-xxx-class"><span class="nav-number">8.</span> <span class="nav-text">同步块synchronized (xxx.class)</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#对静态方法使用锁和普通锁的不同之处"><span class="nav-number">9.</span> <span class="nav-text">对静态方法使用锁和普通锁的不同之处</span></a></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright" >
+  
+  &copy; 
+  <span itemprop="copyrightYear">2017</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Maintel</span>
+</div>
+
+
+<div class="powered-by">
+  由 <a class="theme-link" href="https://hexo.io">Hexo</a> 强力驱动
+</div>
+
+<div class="theme-info">
+  主题 -
+  <a class="theme-link" href="https://github.com/iissnan/hexo-theme-next">
+    NexT.Mist
+  </a>
+</div>
+
+
+        
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+    
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+  
+  <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+
+  
+  <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+
+  
+  <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.0"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.0"></script>
+
+
+
+  
+  
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.0"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.0"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.0"></script>
+
+
+
+  
+
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+  
+  
+
+  
+
+  
+
+  
+
+  
+
+
+  
+
+</body>
+</html>
