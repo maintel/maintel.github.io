@@ -1,0 +1,932 @@
+<!doctype html>
+
+
+
+
+<html class="theme-next mist" lang="zh-Hans">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+  
+  
+  
+  
+
+  
+    
+    
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+    
+    
+    <link href="//fonts.googleapis.com/css?family=Lato:300,300italic,400,400italic,700,700italic&subset=latin,latin-ext" rel="stylesheet" type="text/css">
+  
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.1.0" rel="stylesheet" type="text/css" />
+
+
+  <meta name="keywords" content="跨进程,IPC,Binder,AIDL," />
+
+
+
+
+
+  <link rel="alternate" href="/atom.xml" title="Maintel's notes" type="application/atom+xml" />
+
+
+
+
+  <link rel="shortcut icon" type="image/x-icon" href="/favicon.ico?v=5.1.0" />
+
+
+
+
+
+
+<meta name="description" content="关于 AIDL 的介绍以及基本使用请参看上一篇，本篇主要记录 AIDL 使用中的一些注意事项以及一些高级用法。">
+<meta name="keywords" content="跨进程,IPC,Binder,AIDL">
+<meta property="og:type" content="article">
+<meta property="og:title" content="[Android IPC] AIDL 的使用(二)">
+<meta property="og:url" content="https://maintel.github.io/blog/2017/04/androidIPCAIDL2.html">
+<meta property="og:site_name" content="Maintel&#39;s notes">
+<meta property="og:description" content="关于 AIDL 的介绍以及基本使用请参看上一篇，本篇主要记录 AIDL 使用中的一些注意事项以及一些高级用法。">
+<meta property="og:updated_time" content="2018-03-13T14:46:37.032Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="[Android IPC] AIDL 的使用(二)">
+<meta name="twitter:description" content="关于 AIDL 的介绍以及基本使用请参看上一篇，本篇主要记录 AIDL 使用中的一些注意事项以及一些高级用法。">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Mist',
+    sidebar: {"position":"left","display":"post","offset":12,"offset_float":0,"b2t":false,"scrollpercent":false},
+    fancybox: true,
+    motion: false,
+    duoshuo: {
+      userId: 'undefined',
+      author: '博主'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="https://maintel.github.io/blog/2017/04/androidIPCAIDL2.html"/>
+
+
+
+
+
+  <title> [Android IPC] AIDL 的使用(二) | Maintel's notes </title>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+
+
+
+
+
+  <script type="text/javascript">
+    var _hmt = _hmt || [];
+    (function() {
+      var hm = document.createElement("script");
+      hm.src = "https://hm.baidu.com/hm.js?3e7db1112f6e1fe650d6ace646c9e4e3";
+      var s = document.getElementsByTagName("script")[0];
+      s.parentNode.insertBefore(hm, s);
+    })();
+  </script>
+
+
+
+
+
+
+
+
+
+
+  
+  
+    
+  
+
+  <div class="container one-collumn sidebar-position-left page-post-detail ">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/"  class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">Maintel's notes</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle"></p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories/index.html" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br />
+            
+            分类
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-about">
+          <a href="/about/index.html" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-user"></i> <br />
+            
+            关于
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives/index.html" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />
+            
+            归档
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags/index.html" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-tags"></i> <br />
+            
+            标签
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
+    <link itemprop="mainEntityOfPage" href="https://maintel.github.io/blog/2017/04/androidIPCAIDL2.html">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="Maintel">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.jpg">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Maintel's notes">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+            
+            
+              
+                [Android IPC] AIDL 的使用(二)
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2017-04-06T15:08:50+08:00">
+                2017-04-06
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/android技术/" itemprop="url" rel="index">
+                    <span itemprop="name">android技术</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+             <span id="/blog/2017/04/androidIPCAIDL2.html" class="leancloud_visitors" data-flag-title="[Android IPC] AIDL 的使用(二)">
+               <span class="post-meta-divider">|</span>
+               <span class="post-meta-item-icon">
+                 <i class="fa fa-eye"></i>
+               </span>
+               
+                 <span class="post-meta-item-text">阅读次数 </span>
+               
+                 <span class="leancloud-visitors-count"></span>
+             </span>
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <p>关于 AIDL 的介绍以及基本使用请参看<a href="http://blog.maintel.cn/blog/2017/04/AndroidIPC-AIDL%E7%9A%84%E4%BD%BF%E7%94%A81.html" target="_blank" rel="external">上一篇</a>，本篇主要记录 AIDL 使用中的一些注意事项以及一些高级用法。</p>
+<a id="more"></a>
+<h1 id="使用监听"><a href="#使用监听" class="headerlink" title="使用监听"></a>使用监听</h1><p>还是接着上一篇博客中的例子，如果想要在客户端被动的接收一些数据，即服务端数据发生变化后通知客户端——观察者模式。</p>
+<p>下面就以增加了新书然后通知客户端作为例子来实现：</p>
+<p>首先肯定要定义一个接口起名叫 IOnNewBookAddedListener.aidl；</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div></pre></td><td class="code"><pre><div class="line"><span class="comment">// IOnNewBookAdded.aidl</span></div><div class="line"><span class="keyword">package</span> com.maintel.binderdemo1.listener;</div><div class="line"></div><div class="line"><span class="comment">//手动引入 Book</span></div><div class="line"><span class="keyword">import</span> com.maintel.binderdemo1.model.Book;</div><div class="line"></div><div class="line"><span class="class"><span class="keyword">interface</span> <span class="title">IOnNewBookAddedListener</span> </span>&#123;</div><div class="line"></div><div class="line">    <span class="function"><span class="keyword">void</span> <span class="title">onNewBookAdded</span><span class="params">(in Book newBook)</span></span>;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>然后再 IBookManager.aidl 中增加两个方法用来注册和取消注册；</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">package</span> com.maintel.binderdemo1;</div><div class="line"></div><div class="line"><span class="keyword">import</span> com.maintel.binderdemo1.model.Book;</div><div class="line"><span class="keyword">import</span> com.maintel.binderdemo1.listener.IOnNewBookAddedListener;</div><div class="line"></div><div class="line"><span class="class"><span class="keyword">interface</span> <span class="title">IBookManager</span> </span>&#123;</div><div class="line">    <span class="function">List&lt;Book&gt; <span class="title">getBookList</span><span class="params">()</span></span>;</div><div class="line">    <span class="function"><span class="keyword">void</span> <span class="title">addBook</span><span class="params">(in Book book)</span></span>;</div><div class="line">    <span class="function"><span class="keyword">void</span> <span class="title">registerListener</span><span class="params">(IOnNewBookAddedListener listener)</span></span>;</div><div class="line">    <span class="function"><span class="keyword">void</span> <span class="title">unregisterListener</span><span class="params">(IOnNewBookAddedListener listener)</span></span>;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>然后改造服务端实现新增加的方法：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div><div class="line">40</div><div class="line">41</div><div class="line">42</div><div class="line">43</div><div class="line">44</div><div class="line">45</div><div class="line">46</div><div class="line">47</div><div class="line">48</div><div class="line">49</div><div class="line">50</div><div class="line">51</div><div class="line">52</div><div class="line">53</div><div class="line">54</div><div class="line">55</div><div class="line">56</div><div class="line">57</div><div class="line">58</div><div class="line">59</div><div class="line">60</div><div class="line">61</div><div class="line">62</div><div class="line">63</div><div class="line">64</div><div class="line">65</div><div class="line">66</div><div class="line">67</div><div class="line">68</div><div class="line">69</div><div class="line">70</div><div class="line">71</div><div class="line">72</div><div class="line">73</div><div class="line">74</div><div class="line">75</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">BookManagerService</span> <span class="keyword">extends</span> <span class="title">Service</span> </span>&#123;</div><div class="line">    </div><div class="line">    <span class="keyword">private</span> CopyOnWriteArrayList&lt;Book&gt; mBookList = <span class="keyword">new</span> CopyOnWriteArrayList&lt;&gt;();</div><div class="line">    <span class="keyword">private</span> RemoteCallbackList&lt;IOnNewBookAddedListener&gt; mListeners = <span class="keyword">new</span> RemoteCallbackList&lt;&gt;();  <span class="comment">//注意这里</span></div><div class="line">    <span class="keyword">private</span> <span class="keyword">boolean</span> isServiceDestroyed = <span class="keyword">false</span>;</div><div class="line"></div><div class="line">    <span class="meta">@Override</span></div><div class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">onCreate</span><span class="params">()</span> </span>&#123;</div><div class="line">        <span class="keyword">super</span>.onCreate();</div><div class="line">        ...</div><div class="line">        <span class="keyword">new</span> Thread(<span class="keyword">new</span> ServiceWorker()).start();</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    <span class="meta">@Nullable</span></div><div class="line">    <span class="meta">@Override</span></div><div class="line">    <span class="function"><span class="keyword">public</span> IBinder <span class="title">onBind</span><span class="params">(Intent intent)</span> </span>&#123;</div><div class="line">        <span class="keyword">return</span> mBinder;</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    <span class="keyword">private</span> Binder mBinder = <span class="keyword">new</span> IBookManager.Stub() &#123;</div><div class="line">        </div><div class="line">        ...</div><div class="line"></div><div class="line">        <span class="meta">@Override</span></div><div class="line">        <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">registerListener</span><span class="params">(IOnNewBookAddedListener listener)</span> <span class="keyword">throws</span> RemoteException </span>&#123;</div><div class="line">            mListeners.register(listener);</div><div class="line">        &#125;</div><div class="line"></div><div class="line">        <span class="meta">@Override</span></div><div class="line">        <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">unregisterListener</span><span class="params">(IOnNewBookAddedListener listener)</span> <span class="keyword">throws</span> RemoteException </span>&#123;</div><div class="line">            mListeners.unregister(listener);</div><div class="line">        &#125;</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    <span class="keyword">private</span> <span class="class"><span class="keyword">class</span> <span class="title">ServiceWorker</span> <span class="keyword">implements</span> <span class="title">Runnable</span> </span>&#123;</div><div class="line"></div><div class="line">        <span class="meta">@Override</span></div><div class="line">        <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">run</span><span class="params">()</span> </span>&#123;</div><div class="line">            <span class="keyword">while</span> (!isServiceDestroyed) &#123;</div><div class="line">                <span class="keyword">try</span> &#123;</div><div class="line">                    Thread.sleep(<span class="number">5000</span>);</div><div class="line">                &#125; <span class="keyword">catch</span> (InterruptedException e) &#123;</div><div class="line">                    e.printStackTrace();</div><div class="line">                &#125;</div><div class="line">                <span class="keyword">int</span> id = mBookList.size() + <span class="number">1</span>;</div><div class="line">                Book b = <span class="keyword">new</span> Book(id, <span class="string">"new book*"</span> + id);</div><div class="line">                <span class="keyword">try</span> &#123;</div><div class="line">                    onBookAdded(b);</div><div class="line">                &#125; <span class="keyword">catch</span> (RemoteException e) &#123;</div><div class="line">                    e.printStackTrace();</div><div class="line">                &#125;</div><div class="line">            &#125;</div><div class="line"></div><div class="line">        &#125;</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    <span class="function"><span class="keyword">private</span> <span class="keyword">void</span> <span class="title">onBookAdded</span><span class="params">(Book book)</span> <span class="keyword">throws</span> RemoteException </span>&#123;</div><div class="line">        mBookList.add(book);</div><div class="line">        <span class="keyword">final</span> <span class="keyword">int</span> N = mListeners.beginBroadcast();</div><div class="line">        <span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">0</span>; i &lt; N; i++) &#123;</div><div class="line">            IOnNewBookAddedListener listener = mListeners.getBroadcastItem(i);</div><div class="line">            <span class="keyword">if</span> (listener != <span class="keyword">null</span>) &#123;</div><div class="line">                listener.onNewBookAdded(book);</div><div class="line">            &#125;</div><div class="line">        &#125;</div><div class="line">        mListeners.finishBroadcast();</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    <span class="meta">@Override</span></div><div class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">onDestroy</span><span class="params">()</span> </span>&#123;</div><div class="line">        isServiceDestroyed = <span class="keyword">true</span>;</div><div class="line">        <span class="keyword">super</span>.onDestroy();</div><div class="line">    &#125;</div><div class="line"></div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>修改客户端如下：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div><div class="line">40</div><div class="line">41</div><div class="line">42</div><div class="line">43</div><div class="line">44</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">MainActivity</span> <span class="keyword">extends</span> <span class="title">AppCompatActivity</span> </span>&#123;</div><div class="line"></div><div class="line">    <span class="keyword">private</span> IBookManager bookManager;</div><div class="line">    </div><div class="line">    <span class="keyword">private</span> IOnNewBookAddedListener onNewBookAddedListener = <span class="keyword">new</span> IOnNewBookAddedListener.Stub() &#123;</div><div class="line">        <span class="meta">@Override</span></div><div class="line">        <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">onNewBookAdded</span><span class="params">(Book newBook)</span> <span class="keyword">throws</span> RemoteException </span>&#123;</div><div class="line">            System.err.println(Thread.currentThread());  <span class="comment">//将当前线程打印出来</span></div><div class="line">            Log.d(<span class="string">"MainActivity$newbook"</span>, newBook.toString());</div><div class="line">        &#125;</div><div class="line">    &#125;;</div><div class="line"></div><div class="line">    <span class="keyword">private</span> ServiceConnection mConnection = <span class="keyword">new</span> ServiceConnection() &#123;</div><div class="line">        <span class="meta">@Override</span></div><div class="line">        <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">onServiceConnected</span><span class="params">(ComponentName componentName, IBinder iBinder)</span> </span>&#123;</div><div class="line">            Log.e(<span class="string">"MainActivity$Connected"</span>, <span class="string">"Thread.currentThread():"</span> + Thread.currentThread());<span class="comment">//将当前线程打印出来</span></div><div class="line">            bookManager = IBookManager.Stub.asInterface(iBinder);</div><div class="line">            <span class="keyword">try</span> &#123;</div><div class="line">                bookManager.registerListener(onNewBookAddedListener);</div><div class="line">            &#125; <span class="keyword">catch</span> (RemoteException e) &#123;</div><div class="line">                e.printStackTrace();</div><div class="line">            &#125;</div><div class="line">        &#125;</div><div class="line"></div><div class="line">        <span class="meta">@Override</span></div><div class="line">        <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">onServiceDisconnected</span><span class="params">(ComponentName componentName)</span> </span>&#123;</div><div class="line">            Log.e(<span class="string">"MainActivity$Disconnect"</span>, <span class="string">"Thread.currentThread():"</span> + Thread.currentThread());<span class="comment">//将当前线程打印出来</span></div><div class="line">            bookManager = <span class="keyword">null</span>;</div><div class="line">        &#125;</div><div class="line">    &#125;;</div><div class="line"></div><div class="line">    <span class="meta">@Override</span></div><div class="line">    <span class="function"><span class="keyword">protected</span> <span class="keyword">void</span> <span class="title">onDestroy</span><span class="params">()</span> </span>&#123;</div><div class="line">        <span class="keyword">if</span> (bookManager != <span class="keyword">null</span> &amp;&amp; bookManager.asBinder().isBinderAlive()) &#123;</div><div class="line">            <span class="keyword">try</span> &#123;</div><div class="line">                bookManager.unregisterListener(onNewBookAddedListener);</div><div class="line">            &#125; <span class="keyword">catch</span> (RemoteException e) &#123;</div><div class="line">                e.printStackTrace();</div><div class="line">            &#125;</div><div class="line">        &#125;</div><div class="line">        unbindService(mConnection);</div><div class="line">        <span class="keyword">super</span>.onDestroy();</div><div class="line">    &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>以上就实现了一个简单的监听，每隔五秒会打印一条书籍的信息。</p>
+<p>接下来就要说一些注意事项了，通过上面的代码可以发现在记录 IOnNewBookAddedListener 监听集合的时候使用了 RemoteCallbackList，而不是一般常用的 ArrayList 等为什么呢？</p>
+<h1 id="RemoteCallbackList"><a href="#RemoteCallbackList" class="headerlink" title="RemoteCallbackList"></a>RemoteCallbackList</h1><p>虽然常用的注册与解注册方法是传递相同的对象，而且上面也确实传递了同样的对象，但是首先要明白 AIDL 是用来实现多进程通讯的，其底层的 Binder 机制会把客户端传递过来的对象重新转化成一个新的对象，因此即使我们传递了相同的对象来解注册，但是到服务端的时候已经是一个新的对象了。这也是为什么使用自定义的对象的时候必须要实现 Parcelable 接口的原因。</p>
+<p>RemoteCallbackList 是系统专门提供用于删除跨进程 listener 的接口，其内部维护了一个 Map 结构来保存所有的 AIDL 回调。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">ArrayMap&lt;IBinder,Callback&gt; mCallbacks = <span class="keyword">new</span> ArrayMap&lt;IBinder,Callback&gt;();</div></pre></td></tr></table></figure>
+<p>另外 RemoteCallbackList 在客户端进程终止后，会自动清除客户端注册的 listener，而且其内部实现了线程同步功能。</p>
+<p>这里要注意的是遍历 RemoteCallbackList 的方法，只能使用下面的方法：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">int</span> i = callbacks.beginBroadcast();</div><div class="line"><span class="keyword">while</span> (i &gt; <span class="number">0</span>) &#123;</div><div class="line">    i--;</div><div class="line">    <span class="keyword">try</span> &#123;</div><div class="line">        callbacks.getBroadcastItem(i); <span class="comment">// 获取回调</span></div><div class="line">    &#125; <span class="keyword">catch</span> (RemoteException e) &#123;</div><div class="line">       </div><div class="line">    &#125;</div><div class="line">&#125;</div><div class="line">callbacks.finishBroadcast();</div></pre></td></tr></table></figure>
+<p>beginBroadcast() 和 finishBroadcast() 一定要配合使用。</p>
+<h1 id="注意-listener-回调所在线程"><a href="#注意-listener-回调所在线程" class="headerlink" title="注意 listener 回调所在线程"></a>注意 listener 回调所在线程</h1><p>当服务端回调 listener 中的方法时，被回调的方法运行在客户端的 Binder 线程池中，所以当<strong>回调需要操作 UI 时记得将线程切换到 UI 线程</strong>，同时，如果客户端回调方法要执行大量耗时操作时，会阻塞服务端发起回调的方法，因此要确保<strong>当客户端回调方法执行耗时操作是，服务端发起回调的方法不要运行在 UI 线程中</strong>。就像例子中 BookManagerService 的 onBookAdded 方法，它调用了客户端的 IOnNewBookAddedListener 的 onNewBookAdded 方法，如果客户端的这个 onNewBookAdded 方法比较耗时的话，要确保 onBookAdded 方法运行在非 UI 线程中。</p>
+<h1 id="注意耗时操作"><a href="#注意耗时操作" class="headerlink" title="注意耗时操作"></a>注意耗时操作</h1><p>由于服务端方法本身运行在服务端的 Binder 线程池中，所以服务端的方法本身可以执行大量耗时操作，但是如果在客户端的 UI 线程中调用服务端的耗时方法的话就可能触法 ANR 异常，因为<strong>当客户端调用服务端方法时客户端的现成会被挂起直到服务端执行完毕</strong>。</p>
+<p>所以当需要调用服务端的耗时方法时，客户端请务必放在子线程中操作。</p>
+<h1 id="死亡监听"><a href="#死亡监听" class="headerlink" title="死亡监听"></a>死亡监听</h1><p>可以有两个方法对 Service 的异常结束做监听。</p>
+<ul>
+<li><p>给 Binder 添加 DeathRecipient 监听，当 Binder 死亡时会收到 binderDeid 回调</p>
+<p>  此方法运行在 Binder 线程池中。</p>
+</li>
+<li><p>在 onServiceDisconnected 中做监听，当 Service 异常结束时会调用此方法</p>
+<p>  此方法运行在 UI 线程中。</p>
+</li>
+</ul>
+<h1 id="权限检查"><a href="#权限检查" class="headerlink" title="权限检查"></a>权限检查</h1><ul>
+<li>可以通过自定义权限然后在 onBind 中进行权限验证；</li>
+<li>通过自定义权限在 onTransact 中进行验证；</li>
+<li>通过 Uid 和Pid 在 onTransact 中进行验证；</li>
+<li>为 Service 制定 android:permission 属性来验证；</li>
+</ul>
+<h1 id="参考资料"><a href="#参考资料" class="headerlink" title="参考资料"></a>参考资料</h1><ul>
+<li>《Android 开发艺术探索》-任玉刚</li>
+<li><a href="https://developer.android.google.cn/guide/components/aidl.html?hl=zh-cn#PassingObjects" target="_blank" rel="external">Android 接口定义语言 (AIDL)</a></li>
+</ul>
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/跨进程/" rel="tag"># 跨进程</a>
+          
+            <a href="/tags/IPC/" rel="tag"># IPC</a>
+          
+            <a href="/tags/Binder/" rel="tag"># Binder</a>
+          
+            <a href="/tags/AIDL/" rel="tag"># AIDL</a>
+          
+        </div>
+      
+
+      
+        
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/blog/2017/04/AndroidIPC-AIDL的使用1.html" rel="next" title="[Android IPC] AIDL 的使用(一)">
+                <i class="fa fa-chevron-left"></i> [Android IPC] AIDL 的使用(一)
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/blog/2017/05/spring1概述.html" rel="prev" title="[Spring] 概述">
+                [Spring] 概述 <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+          
+          </div>
+          
+
+
+          
+  <div class="comments" id="comments">
+    
+  </div>
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap" >
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+          <img class="site-author-image" itemprop="image"
+               src="/images/avatar.jpg"
+               alt="Maintel" />
+          <p class="site-author-name" itemprop="name">Maintel</p>
+           
+              <p class="site-description motion-element" itemprop="description">不忘初心 方得始终</p>
+          
+        </div>
+        <nav class="site-state motion-element">
+
+          
+            <div class="site-state-item site-state-posts">
+              <a href="/archives/index.html">
+                <span class="site-state-item-count">21</span>
+                <span class="site-state-item-name">日志</span>
+              </a>
+            </div>
+          
+
+          
+            
+            
+            <div class="site-state-item site-state-categories">
+              <a href="/categories/index.html">
+                <span class="site-state-item-count">7</span>
+                <span class="site-state-item-name">分类</span>
+              </a>
+            </div>
+          
+
+          
+            
+            
+            <div class="site-state-item site-state-tags">
+              <a href="/tags/index.html">
+                <span class="site-state-item-count">24</span>
+                <span class="site-state-item-name">标签</span>
+              </a>
+            </div>
+          
+
+        </nav>
+
+        
+          <div class="feed-link motion-element">
+            <a href="/atom.xml" rel="alternate">
+              <i class="fa fa-rss"></i>
+              RSS
+            </a>
+          </div>
+        
+
+        <div class="links-of-author motion-element">
+          
+            
+              <span class="links-of-author-item">
+                <a href="https://github.com/maintel" target="_blank" title="GitHub">
+                  
+                    <i class="fa fa-fw fa-github"></i>
+                  
+                  GitHub
+                </a>
+              </span>
+            
+          
+        </div>
+
+        
+        
+
+        
+        
+          <div class="links-of-blogroll motion-element links-of-blogroll-inline">
+            <div class="links-of-blogroll-title">
+              <i class="fa  fa-fw fa-globe"></i>
+              友情链接
+            </div>
+            <ul class="links-of-blogroll-list">
+              
+                <li class="links-of-blogroll-item">
+                  <a href="http://www.maintel.cn" title="maintel" target="_blank">maintel</a>
+                </li>
+              
+                <li class="links-of-blogroll-item">
+                  <a href="http://www.github.com" title="GitHub" target="_blank">GitHub</a>
+                </li>
+              
+            </ul>
+          </div>
+        
+
+        
+
+
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#使用监听"><span class="nav-number">1.</span> <span class="nav-text">使用监听</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#RemoteCallbackList"><span class="nav-number">2.</span> <span class="nav-text">RemoteCallbackList</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#注意-listener-回调所在线程"><span class="nav-number">3.</span> <span class="nav-text">注意 listener 回调所在线程</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#注意耗时操作"><span class="nav-number">4.</span> <span class="nav-text">注意耗时操作</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#死亡监听"><span class="nav-number">5.</span> <span class="nav-text">死亡监听</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#权限检查"><span class="nav-number">6.</span> <span class="nav-text">权限检查</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#参考资料"><span class="nav-number">7.</span> <span class="nav-text">参考资料</span></a></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright" >
+  
+  &copy;  2016 - 
+  <span itemprop="copyrightYear">2018</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Maintel</span>
+</div>
+
+
+<div class="powered-by">
+  由 <a class="theme-link" href="https://hexo.io">Hexo</a> 强力驱动
+</div>
+
+<div class="theme-info">
+  主题 -
+  <a class="theme-link" href="https://github.com/iissnan/hexo-theme-next">
+    NexT.Mist
+  </a>
+</div>
+
+
+        
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+    
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+  
+  <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+
+  
+  <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+
+  
+  <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.0"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.0"></script>
+
+
+
+  
+  
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.0"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.0"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.0"></script>
+
+
+
+  
+
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+  
+  
+
+  
+
+  
+
+  
+  <script src="https://cdn1.lncld.net/static/js/av-core-mini-0.6.1.js"></script>
+  <script>AV.initialize("F8P7KKR8kp3D5UvBvGoYIKOr-gzGzoHsz", "KvMFi0FwQ1mwkBbme56Vb80b");</script>
+  <script>
+    function showTime(Counter) {
+      var query = new AV.Query(Counter);
+      var entries = [];
+      var $visitors = $(".leancloud_visitors");
+
+      $visitors.each(function () {
+        entries.push( $(this).attr("id").trim() );
+      });
+
+      query.containedIn('url', entries);
+      query.find()
+        .done(function (results) {
+          var COUNT_CONTAINER_REF = '.leancloud-visitors-count';
+
+          if (results.length === 0) {
+            $visitors.find(COUNT_CONTAINER_REF).text(0);
+            return;
+          }
+
+          for (var i = 0; i < results.length; i++) {
+            var item = results[i];
+            var url = item.get('url');
+            var time = item.get('time');
+            var element = document.getElementById(url);
+
+            $(element).find(COUNT_CONTAINER_REF).text(time);
+          }
+          for(var i = 0; i < entries.length; i++) {
+            var url = entries[i];
+            var element = document.getElementById(url);
+            var countSpan = $(element).find(COUNT_CONTAINER_REF);
+            if( countSpan.text() == '') {
+              countSpan.text(0);
+            }
+          }
+        })
+        .fail(function (object, error) {
+          console.log("Error: " + error.code + " " + error.message);
+        });
+    }
+
+    function addCount(Counter) {
+      var $visitors = $(".leancloud_visitors");
+      var url = $visitors.attr('id').trim();
+      var title = $visitors.attr('data-flag-title').trim();
+      var query = new AV.Query(Counter);
+
+      query.equalTo("url", url);
+      query.find({
+        success: function(results) {
+          if (results.length > 0) {
+            var counter = results[0];
+            counter.fetchWhenSave(true);
+            counter.increment("time");
+            counter.save(null, {
+              success: function(counter) {
+                var $element = $(document.getElementById(url));
+                $element.find('.leancloud-visitors-count').text(counter.get('time'));
+              },
+              error: function(counter, error) {
+                console.log('Failed to save Visitor num, with error message: ' + error.message);
+              }
+            });
+          } else {
+            var newcounter = new Counter();
+            /* Set ACL */
+            var acl = new AV.ACL();
+            acl.setPublicReadAccess(true);
+            acl.setPublicWriteAccess(true);
+            newcounter.setACL(acl);
+            /* End Set ACL */
+            newcounter.set("title", title);
+            newcounter.set("url", url);
+            newcounter.set("time", 1);
+            newcounter.save(null, {
+              success: function(newcounter) {
+                var $element = $(document.getElementById(url));
+                $element.find('.leancloud-visitors-count').text(newcounter.get('time'));
+              },
+              error: function(newcounter, error) {
+                console.log('Failed to create');
+              }
+            });
+          }
+        },
+        error: function(error) {
+          console.log('Error:' + error.code + " " + error.message);
+        }
+      });
+    }
+
+    $(function() {
+      var Counter = AV.Object.extend("Counter");
+      if ($('.leancloud_visitors').length == 1) {
+        addCount(Counter);
+      } else if ($('.post-title-link').length > 1) {
+        showTime(Counter);
+      }
+    });
+  </script>
+
+
+
+  
+
+  
+
+
+  
+
+</body>
+</html>

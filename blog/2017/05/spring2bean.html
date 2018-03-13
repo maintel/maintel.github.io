@@ -1,0 +1,956 @@
+<!doctype html>
+
+
+
+
+<html class="theme-next mist" lang="zh-Hans">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+  
+  
+  
+  
+
+  
+    
+    
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+    
+    
+    <link href="//fonts.googleapis.com/css?family=Lato:300,300italic,400,400italic,700,700italic&subset=latin,latin-ext" rel="stylesheet" type="text/css">
+  
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.1.0" rel="stylesheet" type="text/css" />
+
+
+  <meta name="keywords" content="spring,spring boot,java后台," />
+
+
+
+
+
+  <link rel="alternate" href="/atom.xml" title="Maintel's notes" type="application/atom+xml" />
+
+
+
+
+  <link rel="shortcut icon" type="image/x-icon" href="/favicon.ico?v=5.1.0" />
+
+
+
+
+
+
+<meta name="description" content="任何一个应用都是由多了为了实现业务目标而相互协作的对象构成，传统的方法中创建这些对象间的关联关系通常通过构造器或者查找，而这通常会导致高度耦合、结构复杂、难以复用以及难以进行单元测试。 在 Spring 中，对象无需自己查找或者创建与其关联的其他对象，容器负责把需要相互协作的对象引用赋予各个对象。创建对象之间的协作关系行为称为装配，这也是依赖注入（DI）的本质。">
+<meta name="keywords" content="spring,spring boot,java后台">
+<meta property="og:type" content="article">
+<meta property="og:title" content="[Spring] 装配 bean">
+<meta property="og:url" content="https://maintel.github.io/blog/2017/05/spring2bean.html">
+<meta property="og:site_name" content="Maintel&#39;s notes">
+<meta property="og:description" content="任何一个应用都是由多了为了实现业务目标而相互协作的对象构成，传统的方法中创建这些对象间的关联关系通常通过构造器或者查找，而这通常会导致高度耦合、结构复杂、难以复用以及难以进行单元测试。 在 Spring 中，对象无需自己查找或者创建与其关联的其他对象，容器负责把需要相互协作的对象引用赋予各个对象。创建对象之间的协作关系行为称为装配，这也是依赖注入（DI）的本质。">
+<meta property="og:image" content="http://blogqn.maintel.cn/TIM截图20170901164502.png?e=3081054847&token=kDSqSAyKGaf8JcHprWP7S4W3hGuz8kDIEhzAufWH:WfKEQPLL18PbQw2U39GNAuz1Yus=">
+<meta property="og:updated_time" content="2018-03-13T14:46:37.034Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="[Spring] 装配 bean">
+<meta name="twitter:description" content="任何一个应用都是由多了为了实现业务目标而相互协作的对象构成，传统的方法中创建这些对象间的关联关系通常通过构造器或者查找，而这通常会导致高度耦合、结构复杂、难以复用以及难以进行单元测试。 在 Spring 中，对象无需自己查找或者创建与其关联的其他对象，容器负责把需要相互协作的对象引用赋予各个对象。创建对象之间的协作关系行为称为装配，这也是依赖注入（DI）的本质。">
+<meta name="twitter:image" content="http://blogqn.maintel.cn/TIM截图20170901164502.png?e=3081054847&token=kDSqSAyKGaf8JcHprWP7S4W3hGuz8kDIEhzAufWH:WfKEQPLL18PbQw2U39GNAuz1Yus=">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Mist',
+    sidebar: {"position":"left","display":"post","offset":12,"offset_float":0,"b2t":false,"scrollpercent":false},
+    fancybox: true,
+    motion: false,
+    duoshuo: {
+      userId: 'undefined',
+      author: '博主'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="https://maintel.github.io/blog/2017/05/spring2bean.html"/>
+
+
+
+
+
+  <title> [Spring] 装配 bean | Maintel's notes </title>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+
+
+
+
+
+  <script type="text/javascript">
+    var _hmt = _hmt || [];
+    (function() {
+      var hm = document.createElement("script");
+      hm.src = "https://hm.baidu.com/hm.js?3e7db1112f6e1fe650d6ace646c9e4e3";
+      var s = document.getElementsByTagName("script")[0];
+      s.parentNode.insertBefore(hm, s);
+    })();
+  </script>
+
+
+
+
+
+
+
+
+
+
+  
+  
+    
+  
+
+  <div class="container one-collumn sidebar-position-left page-post-detail ">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/"  class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">Maintel's notes</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle"></p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories/index.html" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br />
+            
+            分类
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-about">
+          <a href="/about/index.html" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-user"></i> <br />
+            
+            关于
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives/index.html" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />
+            
+            归档
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags/index.html" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-tags"></i> <br />
+            
+            标签
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
+    <link itemprop="mainEntityOfPage" href="https://maintel.github.io/blog/2017/05/spring2bean.html">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="Maintel">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.jpg">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Maintel's notes">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+            
+            
+              
+                [Spring] 装配 bean
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2017-05-09T18:01:19+08:00">
+                2017-05-09
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/Spring/" itemprop="url" rel="index">
+                    <span itemprop="name">Spring</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+             <span id="/blog/2017/05/spring2bean.html" class="leancloud_visitors" data-flag-title="[Spring] 装配 bean">
+               <span class="post-meta-divider">|</span>
+               <span class="post-meta-item-icon">
+                 <i class="fa fa-eye"></i>
+               </span>
+               
+                 <span class="post-meta-item-text">阅读次数 </span>
+               
+                 <span class="leancloud-visitors-count"></span>
+             </span>
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <p>任何一个应用都是由多了为了实现业务目标而相互协作的对象构成，传统的方法中创建这些对象间的关联关系通常通过构造器或者查找，而这通常会导致高度耦合、结构复杂、难以复用以及难以进行单元测试。</p>
+<p>在 Spring 中，对象无需自己查找或者创建与其关联的其他对象，容器负责把需要相互协作的对象引用赋予各个对象。创建对象之间的协作关系行为称为<strong>装配</strong>，这也是依赖注入（DI）的本质。</p>
+<a id="more"></a>
+<h1 id="Spring-装配-bean"><a href="#Spring-装配-bean" class="headerlink" title="Spring 装配 bean"></a>Spring 装配 bean</h1><p>Spring 提供了三种装配机制：</p>
+<ul>
+<li>在 XML 中进行显式配置；</li>
+<li>在 Java 中进行显式配置；</li>
+<li>隐式的 Bean 发现机制和自动装配。</li>
+</ul>
+<p>这三种方式可以互相搭配，而且没有说明某个场景下一定要选用哪种机制。</p>
+<h2 id="自动化装配-Bean"><a href="#自动化装配-Bean" class="headerlink" title="自动化装配 Bean"></a>自动化装配 Bean</h2><p>自动化装配是最便利的配置方案。需要从两个角度来实现：</p>
+<ul>
+<li>组件自动扫描（component scanning）：Spring 会自动发现应用中上下文创建的 bean；</li>
+<li>自动组装（autowiring）：Spring 自动满足 bean 间的依赖。</li>
+</ul>
+<p>（哦 就是 @component 和 @Autowired 嘛）</p>
+<p>但是在使用的时候需要显式的配置 Spring，好让其去主动寻找带有 @component 注解的类，并创建 bean。有两种方式指定：</p>
+<p>方式一：<br><figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line"><span class="meta">@Configuration</span></div><div class="line"><span class="meta">@ComponentScan</span>  <span class="comment">//启用组件扫描。</span></div><div class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">Config</span> </span>&#123;</div><div class="line">&#125;</div></pre></td></tr></table></figure></p>
+<p>@componentScan 默认会扫描当前包下及所有子包，自动查找带有 @component 注解的类。</p>
+<p>方式二：</p>
+<figure class="highlight xml"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line"><span class="tag">&lt;<span class="name">context:component-scan</span> <span class="attr">base-pakage</span>=<span class="string">"packageName"</span>/&gt;</span></div></pre></td></tr></table></figure>
+<p>component-scan 和 @ComponentScan 注解有相同的属性，有以下两个重要的属性：</p>
+<ul>
+<li><p>basePackage </p>
+<p>  指定一个或者多个包名。</p>
+</li>
+<li><p>basePackageClasses</p>
+<p>  指定扫描的类或者实现了某个接口的类。</p>
+</li>
+</ul>
+<p><strong>@Autowired</strong> 注解可以实现自动装配，就是在 Spring 在创建一个 bean 的时候，会根据它来实现自动加入此 bean 所需要的依赖。</p>
+<p>比如下面：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div></pre></td><td class="code"><pre><div class="line"><span class="meta">@Component</span></div><div class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">Engine</span> </span>&#123;</div><div class="line"></div><div class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">power</span><span class="params">()</span> </span>&#123;</div><div class="line">        System.out.println(<span class="string">"go go go!"</span>);</div><div class="line">    &#125;</div><div class="line"></div><div class="line">&#125;</div><div class="line"></div><div class="line"><span class="meta">@Component</span></div><div class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">Car</span> </span>&#123;</div><div class="line"></div><div class="line">    <span class="meta">@Autowired</span>   <span class="comment">//通过注解自动注入</span></div><div class="line">    Engine engine;</div><div class="line"></div><div class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">go</span><span class="params">()</span> </span>&#123;</div><div class="line">        engine.power();</div><div class="line">    &#125;</div><div class="line">&#125;</div><div class="line"></div><div class="line"><span class="meta">@Configuration</span>  <span class="comment">//表明这是一个配置类</span></div><div class="line"><span class="meta">@ComponentScan</span>  <span class="comment">//配置扫描</span></div><div class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">Config</span> </span>&#123;</div><div class="line">&#125;</div><div class="line"></div><div class="line"><span class="comment">// 在一个测试类中进行测试。</span></div><div class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">Test</span> </span>&#123;</div><div class="line"></div><div class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> </span>&#123;</div><div class="line">        BeanFactory factory = <span class="keyword">new</span> AnnotationConfigApplicationContext(Config.class); <span class="comment">//解析配置类</span></div><div class="line">        Car car = factory.getBean(Car.class);</div><div class="line">        car.go();</div><div class="line">    &#125;</div><div class="line">&#125;</div><div class="line"></div><div class="line"><span class="comment">// 运行Test 类可以看到输出 go go go!</span></div></pre></td></tr></table></figure>
+<p>@Autowired 注解可以有多种用法，可以用在构造函数中，或者一个方法上。同时可以使用 java 原生的 @Inject 注解来代替它，在大多数情况下是没有任何问题的。</p>
+<p>大多数时候使用自动化配置来装配 bean，但是有时候这种方法行不通，比如引用一个第三方库的类时，没法给它添加注解，这个时候就需要用到下面两个方法。</p>
+<h2 id="通过-Java-装配-bean"><a href="#通过-Java-装配-bean" class="headerlink" title="通过 Java 装配 bean"></a>通过 Java 装配 bean</h2><p>通过 Java 来装配 bean 很简单，主要是借助 JavaConfig 来实现注入。有两个注解</p>
+<ul>
+<li>Configuration 声明一个配置类</li>
+<li>@Bean 创建一个 bean 实例</li>
+</ul>
+<p>改造上面的例子：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div></pre></td><td class="code"><pre><div class="line"><span class="comment">// Engine 和 Car 不带有任何注解的普通 java 类</span></div><div class="line"><span class="comment">// 配置类</span></div><div class="line"><span class="meta">@Configuration</span></div><div class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">Config</span> </span>&#123;</div><div class="line">    <span class="meta">@Bean</span></div><div class="line">    <span class="function"><span class="keyword">public</span> Engine <span class="title">getEngine</span><span class="params">()</span> </span>&#123;</div><div class="line">        <span class="keyword">return</span> <span class="keyword">new</span> Engine();</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    <span class="meta">@Bean</span></div><div class="line">    <span class="function"><span class="keyword">public</span> Car <span class="title">getCar</span><span class="params">()</span></span>&#123;</div><div class="line">        <span class="keyword">return</span> <span class="keyword">new</span> Car(getEngine()); </div><div class="line">    &#125;</div><div class="line"></div><div class="line">    <span class="meta">@Bean</span></div><div class="line">    <span class="function"><span class="keyword">public</span> Car <span class="title">getCar2</span><span class="params">()</span></span>&#123;</div><div class="line">        <span class="keyword">return</span> <span class="keyword">new</span> Car(getEngine());</div><div class="line">    &#125;</div><div class="line">&#125;</div><div class="line"></div><div class="line">    <span class="comment">// 测试</span></div><div class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> </span>&#123;</div><div class="line">        BeanFactory beanFactory = <span class="keyword">new</span> AnnotationConfigApplicationContext(Config.class);</div><div class="line">        Car car = (Car) beanFactory.getBean(<span class="string">"getCar"</span>);  <span class="comment">// 获取方法就是根据方法名，除非显式的指定了 @Bean 的 name 属性</span></div><div class="line">        car.go();</div><div class="line">        System.out.println(car.getEngine());</div><div class="line">        Car car2 = (Car) beanFactory.getBean(<span class="string">"getCar2"</span>);</div><div class="line">        car2.go();</div><div class="line">        System.out.println(car2.getEngine());</div><div class="line">    &#125;</div><div class="line"><span class="comment">// 通过输出可以看到 car 和 car2 中的 engine 对象是同一个。</span></div></pre></td></tr></table></figure>
+<p>上面方法中写了一个<code>new Car(getEngine())</code>,似乎每次执行都会new 一个新的 engine 实例，但事实并非如此，因为如果一个方法带有 @bean 注解，在默认情况下 Spring 会拦截所有对它的调用，并确保返回该方法创建的 bean，而不是每次都对其进行实际调用。另外需要说明的是，可以在带有 @Bean 注解的方法中做任何 Java 允许做的事情。</p>
+<h2 id="使用-XML-来装配-bean"><a href="#使用-XML-来装配-bean" class="headerlink" title="使用 XML 来装配 bean"></a>使用 XML 来装配 bean</h2><p>通过 xml 来配置的方式在 Spring 历史中已经存在了很长时间，同时使用起来也比较复杂。具体使用可以用下面一图来表示。</p>
+<p><img src="http://blogqn.maintel.cn/TIM截图20170901164502.png?e=3081054847&amp;token=kDSqSAyKGaf8JcHprWP7S4W3hGuz8kDIEhzAufWH:WfKEQPLL18PbQw2U39GNAuz1Yus=" alt=""></p>
+<p>以上是装配 Bean 的三种方式，这三种方式并不是只能独立的使用，它们之间可以相互混用，从而达到最佳方案。</p>
+<h1 id="高级装配"><a href="#高级装配" class="headerlink" title="高级装配"></a>高级装配</h1><p>上面讲了 Spring 装配 bean 基本方法，Spring 还提供了很多高级的用法。</p>
+<h2 id="配置-profile-bean"><a href="#配置-profile-bean" class="headerlink" title="配置 profile bean"></a>配置 profile bean</h2><p>最常见的情况是，开发过程中连接数据库在不同阶段使用的链接不同，开发环境，测试环境，生产环境等等。通过 profile 的配置可以灵活的切换他们而不引起问题。例如：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div></pre></td><td class="code"><pre><div class="line"><span class="meta">@Configuration</span></div><div class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">Config</span></span>&#123;</div><div class="line"></div><div class="line">    <span class="meta">@Bean</span></div><div class="line">    <span class="meta">@Profile</span>(<span class="string">"dev"</span>) <span class="comment">//开发环境</span></div><div class="line">    <span class="function"><span class="keyword">public</span> DataSource <span class="title">devDataSource</span><span class="params">()</span></span>&#123;</div><div class="line">        ...</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    <span class="meta">@Bean</span></div><div class="line">    <span class="meta">@Profile</span>(<span class="string">"test"</span>) <span class="comment">//测试环境</span></div><div class="line">    <span class="function"><span class="keyword">public</span> DataSource <span class="title">testDataSource</span><span class="params">()</span></span>&#123;</div><div class="line">        ...</div><div class="line">    &#125;</div><div class="line">&#125;</div><div class="line"></div><div class="line"><span class="comment">//同样也可以通过 xml 来配置 &lt;bean profile="dev"&gt;...&lt;/bean&gt;</span></div></pre></td></tr></table></figure>
+<p>然后就是如何激活 profile 了，当 profile 处于激活状态时才会创建这个 bean，如果没有都没有处于激活状态的话，则都不会创建。profile 的激活主要依赖于两个属性：</p>
+<ul>
+<li>spring.profiles.active</li>
+<li>spring.profiles.default</li>
+</ul>
+<p>这两个属性相互独立，active 用来确定哪个 profile 会被激活，default 确定默认值。Spring 提供了多种方式来配置这两种属性：</p>
+<ul>
+<li>作为 DispatcherServlet 的初始化参数；</li>
+<li>作为 Web 应用的上下文参数；</li>
+<li>作为 JNDI 条目；</li>
+<li>作为环境变量；</li>
+<li>作为 JVM 的系统属性；</li>
+<li>在集成测试类上，使用 @ActiveProlfiles 注解设置。</li>
+</ul>
+<h2 id="条件化-bean"><a href="#条件化-bean" class="headerlink" title="条件化 bean"></a>条件化 bean</h2><p>使用 @Conditional 注解可以约束只有当一个 bean 满足了特定的条件后才能被创建。注意：只有 Spring 4 以后才提供此注解。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div></pre></td><td class="code"><pre><div class="line">    <span class="meta">@Bean</span></div><div class="line">    <span class="meta">@Conditional</span>(ConditionalTest.class)</div><div class="line">    <span class="function"><span class="keyword">public</span> Car <span class="title">getCar2</span><span class="params">()</span> </span>&#123;</div><div class="line">        <span class="keyword">return</span> <span class="keyword">new</span> Car(getEngine());</div><div class="line">    &#125;</div><div class="line"></div><div class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">ConditionalTest</span> <span class="keyword">implements</span> <span class="title">Condition</span> </span>&#123;</div><div class="line">    <span class="meta">@Override</span></div><div class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">boolean</span> <span class="title">matches</span><span class="params">(ConditionContext conditionContext, AnnotatedTypeMetadata annotatedTypeMetadata)</span> </span>&#123;</div><div class="line">        <span class="comment">//something</span></div><div class="line">        <span class="keyword">return</span> <span class="keyword">false</span>;</div><div class="line">    &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>如上面所示，@Conditional 注解必须给定一个实现了 Condition 接口的类，这个接口的实现很简单，通过 matches 方法返回值来确定是否创建 bean，true 则创建，false 则不创建。matches 方法给定的两个参数能够帮我们做很多事情，例如检查 bean 的定义、检查 bean 是否存在、检查某个资源是否加载、检查类的加载情况、检查是否有其他约束等。</p>
+<p>而且从 Spring 4开始 @Profile 也是通过 @Conditional 注解来实现的。</p>
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/spring/" rel="tag"># spring</a>
+          
+            <a href="/tags/spring-boot/" rel="tag"># spring boot</a>
+          
+            <a href="/tags/java后台/" rel="tag"># java后台</a>
+          
+        </div>
+      
+
+      
+        
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/blog/2017/05/spring1概述.html" rel="next" title="[Spring] 概述">
+                <i class="fa fa-chevron-left"></i> [Spring] 概述
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/blog/2017/09/window-performance分析Html加载过程.html" rel="prev" title="window.performance分析Html加载过程">
+                window.performance分析Html加载过程 <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+          
+          </div>
+          
+
+
+          
+  <div class="comments" id="comments">
+    
+  </div>
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap" >
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+          <img class="site-author-image" itemprop="image"
+               src="/images/avatar.jpg"
+               alt="Maintel" />
+          <p class="site-author-name" itemprop="name">Maintel</p>
+           
+              <p class="site-description motion-element" itemprop="description">不忘初心 方得始终</p>
+          
+        </div>
+        <nav class="site-state motion-element">
+
+          
+            <div class="site-state-item site-state-posts">
+              <a href="/archives/index.html">
+                <span class="site-state-item-count">21</span>
+                <span class="site-state-item-name">日志</span>
+              </a>
+            </div>
+          
+
+          
+            
+            
+            <div class="site-state-item site-state-categories">
+              <a href="/categories/index.html">
+                <span class="site-state-item-count">7</span>
+                <span class="site-state-item-name">分类</span>
+              </a>
+            </div>
+          
+
+          
+            
+            
+            <div class="site-state-item site-state-tags">
+              <a href="/tags/index.html">
+                <span class="site-state-item-count">24</span>
+                <span class="site-state-item-name">标签</span>
+              </a>
+            </div>
+          
+
+        </nav>
+
+        
+          <div class="feed-link motion-element">
+            <a href="/atom.xml" rel="alternate">
+              <i class="fa fa-rss"></i>
+              RSS
+            </a>
+          </div>
+        
+
+        <div class="links-of-author motion-element">
+          
+            
+              <span class="links-of-author-item">
+                <a href="https://github.com/maintel" target="_blank" title="GitHub">
+                  
+                    <i class="fa fa-fw fa-github"></i>
+                  
+                  GitHub
+                </a>
+              </span>
+            
+          
+        </div>
+
+        
+        
+
+        
+        
+          <div class="links-of-blogroll motion-element links-of-blogroll-inline">
+            <div class="links-of-blogroll-title">
+              <i class="fa  fa-fw fa-globe"></i>
+              友情链接
+            </div>
+            <ul class="links-of-blogroll-list">
+              
+                <li class="links-of-blogroll-item">
+                  <a href="http://www.maintel.cn" title="maintel" target="_blank">maintel</a>
+                </li>
+              
+                <li class="links-of-blogroll-item">
+                  <a href="http://www.github.com" title="GitHub" target="_blank">GitHub</a>
+                </li>
+              
+            </ul>
+          </div>
+        
+
+        
+
+
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#Spring-装配-bean"><span class="nav-number">1.</span> <span class="nav-text">Spring 装配 bean</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#自动化装配-Bean"><span class="nav-number">1.1.</span> <span class="nav-text">自动化装配 Bean</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#通过-Java-装配-bean"><span class="nav-number">1.2.</span> <span class="nav-text">通过 Java 装配 bean</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#使用-XML-来装配-bean"><span class="nav-number">1.3.</span> <span class="nav-text">使用 XML 来装配 bean</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#高级装配"><span class="nav-number">2.</span> <span class="nav-text">高级装配</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#配置-profile-bean"><span class="nav-number">2.1.</span> <span class="nav-text">配置 profile bean</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#条件化-bean"><span class="nav-number">2.2.</span> <span class="nav-text">条件化 bean</span></a></li></ol></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright" >
+  
+  &copy;  2016 - 
+  <span itemprop="copyrightYear">2018</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Maintel</span>
+</div>
+
+
+<div class="powered-by">
+  由 <a class="theme-link" href="https://hexo.io">Hexo</a> 强力驱动
+</div>
+
+<div class="theme-info">
+  主题 -
+  <a class="theme-link" href="https://github.com/iissnan/hexo-theme-next">
+    NexT.Mist
+  </a>
+</div>
+
+
+        
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+    
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+  
+  <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+
+  
+  <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+
+  
+  <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.0"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.0"></script>
+
+
+
+  
+  
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.0"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.0"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.0"></script>
+
+
+
+  
+
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+  
+  
+
+  
+
+  
+
+  
+  <script src="https://cdn1.lncld.net/static/js/av-core-mini-0.6.1.js"></script>
+  <script>AV.initialize("F8P7KKR8kp3D5UvBvGoYIKOr-gzGzoHsz", "KvMFi0FwQ1mwkBbme56Vb80b");</script>
+  <script>
+    function showTime(Counter) {
+      var query = new AV.Query(Counter);
+      var entries = [];
+      var $visitors = $(".leancloud_visitors");
+
+      $visitors.each(function () {
+        entries.push( $(this).attr("id").trim() );
+      });
+
+      query.containedIn('url', entries);
+      query.find()
+        .done(function (results) {
+          var COUNT_CONTAINER_REF = '.leancloud-visitors-count';
+
+          if (results.length === 0) {
+            $visitors.find(COUNT_CONTAINER_REF).text(0);
+            return;
+          }
+
+          for (var i = 0; i < results.length; i++) {
+            var item = results[i];
+            var url = item.get('url');
+            var time = item.get('time');
+            var element = document.getElementById(url);
+
+            $(element).find(COUNT_CONTAINER_REF).text(time);
+          }
+          for(var i = 0; i < entries.length; i++) {
+            var url = entries[i];
+            var element = document.getElementById(url);
+            var countSpan = $(element).find(COUNT_CONTAINER_REF);
+            if( countSpan.text() == '') {
+              countSpan.text(0);
+            }
+          }
+        })
+        .fail(function (object, error) {
+          console.log("Error: " + error.code + " " + error.message);
+        });
+    }
+
+    function addCount(Counter) {
+      var $visitors = $(".leancloud_visitors");
+      var url = $visitors.attr('id').trim();
+      var title = $visitors.attr('data-flag-title').trim();
+      var query = new AV.Query(Counter);
+
+      query.equalTo("url", url);
+      query.find({
+        success: function(results) {
+          if (results.length > 0) {
+            var counter = results[0];
+            counter.fetchWhenSave(true);
+            counter.increment("time");
+            counter.save(null, {
+              success: function(counter) {
+                var $element = $(document.getElementById(url));
+                $element.find('.leancloud-visitors-count').text(counter.get('time'));
+              },
+              error: function(counter, error) {
+                console.log('Failed to save Visitor num, with error message: ' + error.message);
+              }
+            });
+          } else {
+            var newcounter = new Counter();
+            /* Set ACL */
+            var acl = new AV.ACL();
+            acl.setPublicReadAccess(true);
+            acl.setPublicWriteAccess(true);
+            newcounter.setACL(acl);
+            /* End Set ACL */
+            newcounter.set("title", title);
+            newcounter.set("url", url);
+            newcounter.set("time", 1);
+            newcounter.save(null, {
+              success: function(newcounter) {
+                var $element = $(document.getElementById(url));
+                $element.find('.leancloud-visitors-count').text(newcounter.get('time'));
+              },
+              error: function(newcounter, error) {
+                console.log('Failed to create');
+              }
+            });
+          }
+        },
+        error: function(error) {
+          console.log('Error:' + error.code + " " + error.message);
+        }
+      });
+    }
+
+    $(function() {
+      var Counter = AV.Object.extend("Counter");
+      if ($('.leancloud_visitors').length == 1) {
+        addCount(Counter);
+      } else if ($('.post-title-link').length > 1) {
+        showTime(Counter);
+      }
+    });
+  </script>
+
+
+
+  
+
+  
+
+
+  
+
+</body>
+</html>

@@ -1,0 +1,965 @@
+<!doctype html>
+
+
+
+
+<html class="theme-next mist" lang="zh-Hans">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+  
+  
+  
+  
+
+  
+    
+    
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+    
+    
+    <link href="//fonts.googleapis.com/css?family=Lato:300,300italic,400,400italic,700,700italic&subset=latin,latin-ext" rel="stylesheet" type="text/css">
+  
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.1.0" rel="stylesheet" type="text/css" />
+
+
+  <meta name="keywords" content="spring,spring boot,java后台," />
+
+
+
+
+
+  <link rel="alternate" href="/atom.xml" title="Maintel's notes" type="application/atom+xml" />
+
+
+
+
+  <link rel="shortcut icon" type="image/x-icon" href="/favicon.ico?v=5.1.0" />
+
+
+
+
+
+
+<meta name="description" content="不知不觉已经捣鼓了小半年的 Java 了，主要一直在使用 Spring boot 来开发，但是由于 Spring boot 使用起来太过简单了，虽然做了这么久但是对 Spring 框架、工作原理等还是一头雾水，很多东西不理解也不知道，所以决定从头开始看 Spring，从最基础最简单的 Spring 开始学习。本篇先来从概念的层面了解一下 Spring。">
+<meta name="keywords" content="spring,spring boot,java后台">
+<meta property="og:type" content="article">
+<meta property="og:title" content="[Spring] 概述">
+<meta property="og:url" content="https://maintel.github.io/blog/2017/05/spring1概述.html">
+<meta property="og:site_name" content="Maintel&#39;s notes">
+<meta property="og:description" content="不知不觉已经捣鼓了小半年的 Java 了，主要一直在使用 Spring boot 来开发，但是由于 Spring boot 使用起来太过简单了，虽然做了这么久但是对 Spring 框架、工作原理等还是一头雾水，很多东西不理解也不知道，所以决定从头开始看 Spring，从最基础最简单的 Spring 开始学习。本篇先来从概念的层面了解一下 Spring。">
+<meta property="og:image" content="http://blogqn.maintel.cn/aop.png?e=3080964974&token=kDSqSAyKGaf8JcHprWP7S4W3hGuz8kDIEhzAufWH:I97zo1TVnBw25JBrS-L2PwnvQOs=">
+<meta property="og:image" content="http://blogqn.maintel.cn/Spring模块.png?e=3080971139&token=kDSqSAyKGaf8JcHprWP7S4W3hGuz8kDIEhzAufWH:NHcqZb_6-Z-n5Qq9lflPdBMiJUk=">
+<meta property="og:updated_time" content="2018-03-13T14:46:37.033Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="[Spring] 概述">
+<meta name="twitter:description" content="不知不觉已经捣鼓了小半年的 Java 了，主要一直在使用 Spring boot 来开发，但是由于 Spring boot 使用起来太过简单了，虽然做了这么久但是对 Spring 框架、工作原理等还是一头雾水，很多东西不理解也不知道，所以决定从头开始看 Spring，从最基础最简单的 Spring 开始学习。本篇先来从概念的层面了解一下 Spring。">
+<meta name="twitter:image" content="http://blogqn.maintel.cn/aop.png?e=3080964974&token=kDSqSAyKGaf8JcHprWP7S4W3hGuz8kDIEhzAufWH:I97zo1TVnBw25JBrS-L2PwnvQOs=">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Mist',
+    sidebar: {"position":"left","display":"post","offset":12,"offset_float":0,"b2t":false,"scrollpercent":false},
+    fancybox: true,
+    motion: false,
+    duoshuo: {
+      userId: 'undefined',
+      author: '博主'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="https://maintel.github.io/blog/2017/05/spring1概述.html"/>
+
+
+
+
+
+  <title> [Spring] 概述 | Maintel's notes </title>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+
+
+
+
+
+  <script type="text/javascript">
+    var _hmt = _hmt || [];
+    (function() {
+      var hm = document.createElement("script");
+      hm.src = "https://hm.baidu.com/hm.js?3e7db1112f6e1fe650d6ace646c9e4e3";
+      var s = document.getElementsByTagName("script")[0];
+      s.parentNode.insertBefore(hm, s);
+    })();
+  </script>
+
+
+
+
+
+
+
+
+
+
+  
+  
+    
+  
+
+  <div class="container one-collumn sidebar-position-left page-post-detail ">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/"  class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">Maintel's notes</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle"></p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories/index.html" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br />
+            
+            分类
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-about">
+          <a href="/about/index.html" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-user"></i> <br />
+            
+            关于
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives/index.html" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />
+            
+            归档
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags/index.html" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-tags"></i> <br />
+            
+            标签
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
+    <link itemprop="mainEntityOfPage" href="https://maintel.github.io/blog/2017/05/spring1概述.html">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="Maintel">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.jpg">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Maintel's notes">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+            
+            
+              
+                [Spring] 概述
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2017-05-07T17:54:23+08:00">
+                2017-05-07
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/Spring/" itemprop="url" rel="index">
+                    <span itemprop="name">Spring</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+             <span id="/blog/2017/05/spring1概述.html" class="leancloud_visitors" data-flag-title="[Spring] 概述">
+               <span class="post-meta-divider">|</span>
+               <span class="post-meta-item-icon">
+                 <i class="fa fa-eye"></i>
+               </span>
+               
+                 <span class="post-meta-item-text">阅读次数 </span>
+               
+                 <span class="leancloud-visitors-count"></span>
+             </span>
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <p>不知不觉已经捣鼓了小半年的 Java 了，主要一直在使用 Spring boot 来开发，但是由于 Spring boot 使用起来太过简单了，虽然做了这么久但是对 Spring 框架、工作原理等还是一头雾水，很多东西不理解也不知道，所以决定从头开始看 Spring，从最基础最简单的 Spring 开始学习。本篇先来从概念的层面了解一下 Spring。</p>
+<a id="more"></a>
+<h1 id="Spring"><a href="#Spring" class="headerlink" title="Spring"></a>Spring</h1><p>Spring Framework 是一个提供完善的基础设施用来支持来开发 Java 应用程序的 Java 平台。Spring 负责基础设施功能，使程序员可以专注于应用的开发。</p>
+<p>简单的来说 Spring 是一个轻量级的 Java 开发框架。通过启用基于 POJO 编程模型来促进良好的编程实践。</p>
+<p>Spring 为了减轻 Java 开发的复杂性，采用一下四种核心策略：</p>
+<ul>
+<li>基于 POJO 的轻量级和最小侵入式编程；</li>
+<li>通过依赖注入和面向接口编程实现松耦合；</li>
+<li>基于切面和惯例进行声明式编程；</li>
+<li>通过切面和模板减少样板式代码。</li>
+</ul>
+<p>使用 Spring 的好处：</p>
+<ul>
+<li>使 Java 方法可以执行数据库事务而不用去处理事务 API。</li>
+<li>使本地 Java 方法可以执行远程过程而不用去处理远程 API。</li>
+<li>使本地 Java 方法可以拥有管理操作而不用去处理 JMX API。</li>
+<li>使本地 Java 方法可以执行消息处理而不用去处理 JMS API。</li>
+</ul>
+<h1 id="Spring-核心功能"><a href="#Spring-核心功能" class="headerlink" title="Spring 核心功能"></a>Spring 核心功能</h1><p>Spring 的核心功能有两个</p>
+<ul>
+<li>Spring容器作为超级大工厂，负责创建、管理所有的Java对象，这些Java对象被称为Bean。</li>
+<li>Spring容器管理容器中Bean之间的依赖关系，Spring使用一种被称为”依赖注入”的方式来管理Bean之间的依赖关系。</li>
+</ul>
+<h1 id="Spring-核心特性"><a href="#Spring-核心特性" class="headerlink" title="Spring 核心特性"></a>Spring 核心特性</h1><ul>
+<li>依赖注入（DI）</li>
+<li>面向切面编程（AOP）</li>
+</ul>
+<h1 id="POJO"><a href="#POJO" class="headerlink" title="POJO"></a>POJO</h1><p>POJO 是 Plain Old Java Object 的简称，POJO 和 JavaBean、EJB 一样是 Java 编程规范中的一种规范，并不是指一个特定的对象或者什么。POJO 的最原始的出处是《POJOs in Action》里面：</p>
+<blockquote>
+<p>The term was coined while Rebecca Parsons, Josh MacKenzie and I were preparing for a talk at a conference in September 2000. In the talk we were pointing out the many benefits of encoding business logic into regular java objects rather than using Entity Beans. We wondered why people were so against using regular objects in their systems and concluded that it was because simple objects lacked a fancy name. So we gave them one, and it’s caught on very nicely.</p>
+</blockquote>
+<p>大概的意思就是要将业务逻辑编码为常规java对象而不是使用实体Bean，并给这个常规的 Java 对象起了一个名字——POJO。</p>
+<p>一个 POJO 应该是一个正规的 Java 对象，不但当任何特殊角色，也不实现任何 Java 框架指定的接口。它可以包含一些业务处理或持久化逻辑等。</p>
+<p>Spring 的强大之处就是非侵入式的使用 POJO 从而使 POJO 发挥更大的功能。这样的好处是显而易见的，非侵入就意味着这个类在任何场所都可以使用。Spring 使用 POJO 的方式之一就是通过依赖注入来装配他们。</p>
+<h1 id="依赖注入"><a href="#依赖注入" class="headerlink" title="依赖注入"></a>依赖注入</h1><p>首先什么是依赖，在一个工程中，相互协作的类就叫做相互依赖。举个例子，类 A 中有一个成员变量 B，则可以说 A 依赖 B。传统的编程中，需要自己管理与依赖的对象，比如 New 一个，或者销毁等等，这样必然带来高度的耦合以及增加测试难度。依赖注入能很好的解决这些问题。</p>
+<p><strong>依赖注入</strong>（Dependency Injection，简称DI）可以看做是一个负责协调各对象的第三方组件，对象的依赖关系由这个第三方组件在创建对象的时候设定，它会将锁的关系自动交给目标对象，对象无需自己创建或者管理它们的依赖关系。</p>
+<p>依赖注入能够让相互协作的软件组件保持松耦合。</p>
+<h1 id="面向切面编程"><a href="#面向切面编程" class="headerlink" title="面向切面编程"></a>面向切面编程</h1><p><strong>面向切面编程</strong>（Aspect-oriented Programming，简称AOP）允许把遍布在应用软件各处的功能分离出来形成可重用的组件。</p>
+<p>切面可以理解为横贯整个应用程序过程的一些功能，比如打印日志，缓存数据等等。</p>
+<p><img src="http://blogqn.maintel.cn/aop.png?e=3080964974&amp;token=kDSqSAyKGaf8JcHprWP7S4W3hGuz8kDIEhzAufWH:I97zo1TVnBw25JBrS-L2PwnvQOs=" alt=""></p>
+<p>最常见的通用功能实现技术是继承和委托，但是整个应用都使用相同的基类会使耦合度太高而且系统很脆弱，而委托可能需要对委托的对象进行复杂的调用。而面向切面就是将横贯整个应用的一些功能模块化为特殊的类，这些类就被成为切面（aspect）。</p>
+<p>而 Spring 提供了四种对 AOP 的支持：</p>
+<ul>
+<li>基于代理的经典 Spring AOP；</li>
+<li>纯 POJO 切面；</li>
+<li>@AspectJ 注解驱动的切面；</li>
+<li>注入式 AspectJ 切面。</li>
+</ul>
+<p>Spring AOP 的构建是建立在动态代理基础上的。</p>
+<p>个人理解： DI 是帮助 Spring 组件间即应用对象间的解耦，而 AOP 则更注重的是功能间的解耦，即业务逻辑与横贯应用的通用功能间的解耦。</p>
+<h1 id="Spring-模块"><a href="#Spring-模块" class="headerlink" title="Spring 模块"></a>Spring 模块</h1><p>Spring 框架包含20个不同的模块，在开发中可以根据不同需求选择不同的模块。</p>
+<p><img src="http://blogqn.maintel.cn/Spring模块.png?e=3080971139&amp;token=kDSqSAyKGaf8JcHprWP7S4W3hGuz8kDIEhzAufWH:NHcqZb_6-Z-n5Qq9lflPdBMiJUk=" alt=""></p>
+<ul>
+<li><p>Spring 核心容器</p>
+<p>  容器是 Spring 框架最核心的部分，它管理着 Spring 应用中 bean 的创建、配置和管理。还包括了 Spring bean 工厂、Spring 应用上下文、一些企业服务等。</p>
+</li>
+<li><p>面向切面编程</p>
+<p>  在 AOP 模块中，Spring 对面向切面编程提供的支持就是基于该模块的。</p>
+</li>
+<li><p>数据访问与集成</p>
+<p>  该模块提供了抽象了 JDBC 和 DAO 等的样板代码，使数据库连接服务变得简单，而且不用不关心数据库的关闭等操作。ORM 模块是对较为流行的 ORM 框架的集成， Hibernate、Java Data Object等。还包括消息服务，以及基于 AOP 模块的事务管理服务。</p>
+</li>
+<li><p>Web 与远程调用</p>
+<p>  该模块提供了一个强大的 MVC 框架，同时还提供了一些其他远程调用框架 HTTP invoker，还提供了对 REST API 的支持。</p>
+</li>
+<li><p>Instrumentation</p>
+<p>  提供了为 JVM 添加代理的功能，具体讲就是为 Tomcat 添加一个代理能够为 Tomcat 传递类文件。</p>
+</li>
+<li><p>测试</p>
+<p>  Spring 专门提供了对 Spring 应用测试的支持，比如为单元测试提供 mock 对象的实现等。</p>
+</li>
+</ul>
+<h1 id="结语"><a href="#结语" class="headerlink" title="结语"></a>结语</h1><p>通过上面的整理以及一些自己的理解，总算对 Spring 在整体上有一个理解，简单来说 Spring 是一个致力于让 Java 开发变得简单的框架，它的核心在于 DI 和 AOP，通过 DI 和 AOP 来实现代码以及功能模块间的松耦合。因此理解 DI 和 AOP 至关重要。</p>
+<p>DI 是组装 Spring 组件的一种方式，在运行期赋予一个对象所依赖的对象。</p>
+<p>AOP 能够将一些通用的功能模块化即切面。当 Spring 装配 bean 的时候，这些切面能够在运行期应用到目标对象。</p>
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/spring/" rel="tag"># spring</a>
+          
+            <a href="/tags/spring-boot/" rel="tag"># spring boot</a>
+          
+            <a href="/tags/java后台/" rel="tag"># java后台</a>
+          
+        </div>
+      
+
+      
+        
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/blog/2017/04/androidIPCAIDL2.html" rel="next" title="[Android IPC] AIDL 的使用(二)">
+                <i class="fa fa-chevron-left"></i> [Android IPC] AIDL 的使用(二)
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/blog/2017/05/spring2bean.html" rel="prev" title="[Spring] 装配 bean">
+                [Spring] 装配 bean <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+          
+          </div>
+          
+
+
+          
+  <div class="comments" id="comments">
+    
+  </div>
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap" >
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+          <img class="site-author-image" itemprop="image"
+               src="/images/avatar.jpg"
+               alt="Maintel" />
+          <p class="site-author-name" itemprop="name">Maintel</p>
+           
+              <p class="site-description motion-element" itemprop="description">不忘初心 方得始终</p>
+          
+        </div>
+        <nav class="site-state motion-element">
+
+          
+            <div class="site-state-item site-state-posts">
+              <a href="/archives/index.html">
+                <span class="site-state-item-count">21</span>
+                <span class="site-state-item-name">日志</span>
+              </a>
+            </div>
+          
+
+          
+            
+            
+            <div class="site-state-item site-state-categories">
+              <a href="/categories/index.html">
+                <span class="site-state-item-count">7</span>
+                <span class="site-state-item-name">分类</span>
+              </a>
+            </div>
+          
+
+          
+            
+            
+            <div class="site-state-item site-state-tags">
+              <a href="/tags/index.html">
+                <span class="site-state-item-count">24</span>
+                <span class="site-state-item-name">标签</span>
+              </a>
+            </div>
+          
+
+        </nav>
+
+        
+          <div class="feed-link motion-element">
+            <a href="/atom.xml" rel="alternate">
+              <i class="fa fa-rss"></i>
+              RSS
+            </a>
+          </div>
+        
+
+        <div class="links-of-author motion-element">
+          
+            
+              <span class="links-of-author-item">
+                <a href="https://github.com/maintel" target="_blank" title="GitHub">
+                  
+                    <i class="fa fa-fw fa-github"></i>
+                  
+                  GitHub
+                </a>
+              </span>
+            
+          
+        </div>
+
+        
+        
+
+        
+        
+          <div class="links-of-blogroll motion-element links-of-blogroll-inline">
+            <div class="links-of-blogroll-title">
+              <i class="fa  fa-fw fa-globe"></i>
+              友情链接
+            </div>
+            <ul class="links-of-blogroll-list">
+              
+                <li class="links-of-blogroll-item">
+                  <a href="http://www.maintel.cn" title="maintel" target="_blank">maintel</a>
+                </li>
+              
+                <li class="links-of-blogroll-item">
+                  <a href="http://www.github.com" title="GitHub" target="_blank">GitHub</a>
+                </li>
+              
+            </ul>
+          </div>
+        
+
+        
+
+
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#Spring"><span class="nav-number">1.</span> <span class="nav-text">Spring</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#Spring-核心功能"><span class="nav-number">2.</span> <span class="nav-text">Spring 核心功能</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#Spring-核心特性"><span class="nav-number">3.</span> <span class="nav-text">Spring 核心特性</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#POJO"><span class="nav-number">4.</span> <span class="nav-text">POJO</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#依赖注入"><span class="nav-number">5.</span> <span class="nav-text">依赖注入</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#面向切面编程"><span class="nav-number">6.</span> <span class="nav-text">面向切面编程</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#Spring-模块"><span class="nav-number">7.</span> <span class="nav-text">Spring 模块</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#结语"><span class="nav-number">8.</span> <span class="nav-text">结语</span></a></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright" >
+  
+  &copy;  2016 - 
+  <span itemprop="copyrightYear">2018</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Maintel</span>
+</div>
+
+
+<div class="powered-by">
+  由 <a class="theme-link" href="https://hexo.io">Hexo</a> 强力驱动
+</div>
+
+<div class="theme-info">
+  主题 -
+  <a class="theme-link" href="https://github.com/iissnan/hexo-theme-next">
+    NexT.Mist
+  </a>
+</div>
+
+
+        
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+    
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+  
+  <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+
+  
+  <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+
+  
+  <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.0"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.0"></script>
+
+
+
+  
+  
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.0"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.0"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.0"></script>
+
+
+
+  
+
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+  
+  
+
+  
+
+  
+
+  
+  <script src="https://cdn1.lncld.net/static/js/av-core-mini-0.6.1.js"></script>
+  <script>AV.initialize("F8P7KKR8kp3D5UvBvGoYIKOr-gzGzoHsz", "KvMFi0FwQ1mwkBbme56Vb80b");</script>
+  <script>
+    function showTime(Counter) {
+      var query = new AV.Query(Counter);
+      var entries = [];
+      var $visitors = $(".leancloud_visitors");
+
+      $visitors.each(function () {
+        entries.push( $(this).attr("id").trim() );
+      });
+
+      query.containedIn('url', entries);
+      query.find()
+        .done(function (results) {
+          var COUNT_CONTAINER_REF = '.leancloud-visitors-count';
+
+          if (results.length === 0) {
+            $visitors.find(COUNT_CONTAINER_REF).text(0);
+            return;
+          }
+
+          for (var i = 0; i < results.length; i++) {
+            var item = results[i];
+            var url = item.get('url');
+            var time = item.get('time');
+            var element = document.getElementById(url);
+
+            $(element).find(COUNT_CONTAINER_REF).text(time);
+          }
+          for(var i = 0; i < entries.length; i++) {
+            var url = entries[i];
+            var element = document.getElementById(url);
+            var countSpan = $(element).find(COUNT_CONTAINER_REF);
+            if( countSpan.text() == '') {
+              countSpan.text(0);
+            }
+          }
+        })
+        .fail(function (object, error) {
+          console.log("Error: " + error.code + " " + error.message);
+        });
+    }
+
+    function addCount(Counter) {
+      var $visitors = $(".leancloud_visitors");
+      var url = $visitors.attr('id').trim();
+      var title = $visitors.attr('data-flag-title').trim();
+      var query = new AV.Query(Counter);
+
+      query.equalTo("url", url);
+      query.find({
+        success: function(results) {
+          if (results.length > 0) {
+            var counter = results[0];
+            counter.fetchWhenSave(true);
+            counter.increment("time");
+            counter.save(null, {
+              success: function(counter) {
+                var $element = $(document.getElementById(url));
+                $element.find('.leancloud-visitors-count').text(counter.get('time'));
+              },
+              error: function(counter, error) {
+                console.log('Failed to save Visitor num, with error message: ' + error.message);
+              }
+            });
+          } else {
+            var newcounter = new Counter();
+            /* Set ACL */
+            var acl = new AV.ACL();
+            acl.setPublicReadAccess(true);
+            acl.setPublicWriteAccess(true);
+            newcounter.setACL(acl);
+            /* End Set ACL */
+            newcounter.set("title", title);
+            newcounter.set("url", url);
+            newcounter.set("time", 1);
+            newcounter.save(null, {
+              success: function(newcounter) {
+                var $element = $(document.getElementById(url));
+                $element.find('.leancloud-visitors-count').text(newcounter.get('time'));
+              },
+              error: function(newcounter, error) {
+                console.log('Failed to create');
+              }
+            });
+          }
+        },
+        error: function(error) {
+          console.log('Error:' + error.code + " " + error.message);
+        }
+      });
+    }
+
+    $(function() {
+      var Counter = AV.Object.extend("Counter");
+      if ($('.leancloud_visitors').length == 1) {
+        addCount(Counter);
+      } else if ($('.post-title-link').length > 1) {
+        showTime(Counter);
+      }
+    });
+  </script>
+
+
+
+  
+
+  
+
+
+  
+
+</body>
+</html>
