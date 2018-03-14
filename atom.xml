@@ -1080,9 +1080,9 @@ strategy mechanism. You can inspect the dependency tree by running ./gradlew :ap
       <category term="android技术" scheme="https://maintel.github.io/categories/android%E6%8A%80%E6%9C%AF/"/>
     
     
-      <category term="NKD" scheme="https://maintel.github.io/tags/NKD/"/>
-    
       <category term="JNI" scheme="https://maintel.github.io/tags/JNI/"/>
+    
+      <category term="NKD" scheme="https://maintel.github.io/tags/NKD/"/>
     
   </entry>
   
