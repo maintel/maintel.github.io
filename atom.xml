@@ -68,6 +68,64 @@
   </entry>
   
   <entry>
+    <title>使用动态路由优化H5加载速度</title>
+    <link href="https://maintel.github.io//blog/2017/09/%E4%BD%BF%E7%94%A8%E5%8A%A8%E6%80%81%E8%B7%AF%E7%94%B1%E4%BC%98%E5%8C%96%E5%8A%A0%E8%BD%BD%E9%80%9F%E5%BA%A6.html"/>
+    <id>https://maintel.github.io//blog/2017/09/使用动态路由优化加载速度.html</id>
+    <published>2017-09-17T14:34:31.000Z</published>
+    <updated>2018-03-14T14:54:12.970Z</updated>
+    
+    <content type="html"><![CDATA[<h1 id="背景"><a href="#背景" class="headerlink" title="背景"></a>背景</h1><p>目前的 APP 已经差不多有70%的业务使用 H5 来实现，但是一些页面的白屏现象严重。之前分别从<a href="http://blog.maintel.cn/blog/2017/09/%E5%8E%9F%E7%94%9F%E7%9B%91%E6%8E%A7WebView%E5%8A%A0%E8%BD%BDHtml%E7%9A%84%E8%BF%87%E7%A8%8B-md.html" target="_blank" rel="external">原生层面</a>对 WebView 加载 HTML 以及 H5 层面的 <a href="http://blog.maintel.cn/blog/2017/09/window-performance%E5%88%86%E6%9E%90Html%E5%8A%A0%E8%BD%BD%E8%BF%87%E7%A8%8B.html" target="_blank" rel="external">HTML 的加载过程</a>进行了分析，确定出加载的耗时主要出现在渲染阶段，但是页面本身并不复杂，dom 的结构也很简单，应该渲染很快才对，所以又通过 chrome 的 timeline 来进行更详细分析的<a href="https://developers.google.com/web/tools/chrome-devtools/evaluate-performance/" target="_blank" rel="external">开发文档</a>，结果如下图，可以确定出在一次加载过程中主要的耗时在 JS 的运算上面。</p>
+<p><img src="http://blogqn.maintel.cn/QQ20180305-175335@2x.png?e=3097043637&amp;token=cs2nCfx72Y7hW0_NpFYzb3Jab90IJWraRtphMd-q:OLB8NxtvoFFxegzb60x69sStyAQ=" alt="js 加载耗时"></p>
+<p>由此可以引发出一些思考，因为用来做分析的页面本身很简单，没有很多的 js 运算才对。</p>
+<h1 id="分析"><a href="#分析" class="headerlink" title="分析"></a>分析</h1><p>经过一系列的监控发现加载过程的主要耗时在 js 的运算上面，目标页面并不复杂，仅仅是加载了一个列表而已，没有大量的业务需要进行 js 运算，那这些 js 都是哪来的？又查看了加载以后的 js 竟然有接近 2M，这显然是不正常的，原因出在哪？答案就在 react 项目的打包上，虽然我们的项目已经使用了多页面，但是实际上并不能叫多页面，更准确的应该叫多模块才对，一个模块的所有页面全部在一个总的路由下面，即在一个 html 中，同一模块下的所有页面使用一个 js，而即使通过路由加载一个很简单的页面也有把所有的这些 js 全部加载进来，这些势必造成了长时间的运算。</p>
+<p>问题找到了，经过查阅资料发现比较好的解决办法就是使用动态路由。</p>
+<h1 id="现有路由"><a href="#现有路由" class="headerlink" title="现有路由"></a>现有路由</h1><p>现在林林总总路由加起来有二十多个。经过打包以后的js大小有2M多。这就势必拖慢了加载的速度，在不考虑优化 js 逻辑相关的代码前，使用动态路由技术来对代码进行分离，做到按需加载应该能够提高加载速度。</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div></pre></td><td class="code"><pre><div class="line"> &lt;Route path=<span class="string">"/"</span> component=&#123;WaterIndex&#125; /&gt;</div><div class="line">  &lt;Route path="/AddWaterMeter" component=&#123;AddWaterMeter&#125; /&gt;</div><div class="line">  &lt;Route path="/ConfirmMeter" component=&#123;ConfirmMeter&#125; /&gt;</div><div class="line"></div><div class="line">  ...</div><div class="line"></div><div class="line">  &lt;Route path="/FeedbackList" component=&#123;FeedbackList&#125; /&gt;</div><div class="line">  &lt;Route path="/PaymentHelp" component=&#123;PaymentHelp&#125; /&gt;</div><div class="line">&lt;/Router&gt;</div></pre></td></tr></table></figure>
+<h1 id="动态路由"><a href="#动态路由" class="headerlink" title="动态路由"></a>动态路由</h1><p>原理就是将当前的代码在打包过程中分拆成多个小的包，在用户浏览过程中进行按需加载。<a href="https://react-guide.github.io/react-router-cn/docs/guides/advanced/DynamicRouting.html" target="_blank" rel="external">示例代码</a></p>
+<h2 id="Webpack-配置"><a href="#Webpack-配置" class="headerlink" title="Webpack 配置"></a>Webpack 配置</h2><p>首先在 webpack.config.js 的 output 内加上 chunkFilename</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div></pre></td><td class="code"><pre><div class="line">output: &#123;</div><div class="line">    <span class="attr">path</span>: path.join(__dirname, <span class="string">'/../dist/assets'</span>),</div><div class="line">    <span class="attr">filename</span>: <span class="string">'app.js'</span>,</div><div class="line">    <span class="attr">publicPath</span>: defaultSettings.publicPath,</div><div class="line">    <span class="comment">// 添加 chunkFilename</span></div><div class="line">    chunkFilename: <span class="string">'[name].[chunkhash:5].chunk.js'</span>,</div><div class="line">&#125;,</div></pre></td></tr></table></figure>
+<p>name 是在代码里为创建的 chunk 指定的名字，如果代码中没指定则 webpack 默认分配 id 作为 name。chunkhash 是文件的 hash 码，这里只使用前五位。</p>
+<h2 id="路由配置"><a href="#路由配置" class="headerlink" title="路由配置"></a>路由配置</h2><p>之前的路由就像上面配置的一样，现在修改成如下的样子</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">const</span> AddWaterMeter = <span class="function">(<span class="params">location, callback</span>) =&gt;</span> &#123;</div><div class="line">  <span class="built_in">require</span>.ensure([], <span class="built_in">require</span> =&gt; &#123;</div><div class="line">    callback(<span class="literal">null</span>, <span class="built_in">require</span>(<span class="string">'./views/AddWaterMeter'</span>).default)</div><div class="line">  &#125;, <span class="string">'AddWaterMeter'</span>)</div><div class="line">&#125;</div><div class="line"></div><div class="line"><span class="keyword">const</span> WaterMeterList = <span class="function">(<span class="params">location, callback</span>) =&gt;</span> &#123;</div><div class="line">  <span class="built_in">require</span>.ensure([], <span class="built_in">require</span> =&gt; &#123;</div><div class="line">    callback(<span class="literal">null</span>, <span class="built_in">require</span>(<span class="string">'./views/WaterMeterList'</span>).default)</div><div class="line">  &#125;, <span class="string">'WaterMeterList'</span>)</div><div class="line">&#125;</div><div class="line"></div><div class="line"><span class="keyword">const</span> ConfirmMeter = <span class="function">(<span class="params">location, callback</span>) =&gt;</span> &#123;</div><div class="line">  <span class="built_in">require</span>.ensure([], <span class="built_in">require</span> =&gt; &#123;</div><div class="line">    callback(<span class="literal">null</span>, <span class="built_in">require</span>(<span class="string">'./views/ConfirmMeter'</span>).default)</div><div class="line">  &#125;, <span class="string">'ConfirmMeter'</span>)</div><div class="line">&#125;</div><div class="line"></div><div class="line">ReactDOM.render(</div><div class="line">  &lt;Router</div><div class="line">    history=&#123;hashHistory&#125;</div><div class="line">    render=&#123;applyRouterMiddleware(useScroll())&#125;</div><div class="line">  &gt;</div><div class="line">    &lt;Route path="/" Component=&#123;WaterIndex&#125;&gt;</div><div class="line">      &lt;Route path="AddWaterMeter" Component=&#123;AddWaterMeter&#125; /&gt;</div><div class="line">      &lt;Route path="ConfirmMeter" getComponent=&#123;ConfirmMeter&#125; /&gt;</div><div class="line">      &lt;Route path="WaterMeterList" getComponent=&#123;WaterMeterList&#125; /&gt;</div><div class="line"></div><div class="line">      ...</div><div class="line"></div><div class="line">      &lt;Route path="FeedbackList" getComponent=&#123;FeedbackList&#125; /&gt;</div><div class="line">      &lt;Route path="PaymentHelp" getComponent=&#123;PaymentHelp&#125; /&gt;</div><div class="line">    &lt;/Route&gt;</div><div class="line">  &lt;/Router&gt;,</div><div class="line">  document.getElementById('app')</div><div class="line">)</div></pre></td></tr></table></figure>
+<p>history 不变，将创建的路由传递进去。有几个属性的说明</p>
+<ul>
+<li><p>path</p>
+<p>匹配路由，和之前的定义一样</p>
+</li>
+<li><p>getComponent</p>
+<p>对应于以前的 component 属性，但是这个方法是异步的，也就是当路由匹配时，才会调用这个方法。</p>
+<p>这里面有个 require.ensure 方法</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line"><span class="built_in">require</span>.ensure(dependencies, callback, chunkName)</div></pre></td></tr></table></figure>
+<p>这是 webpack 提供的方法，这也是按需加载的核心方法。第一个参数是依赖，第二个是回调函数，第三个就是上面提到的 chunkName，用来指定这个 chunk file 的 name。</p>
+</li>
+</ul>
+<p>这里有可能会有一个异常:</p>
+<p><strong>The root route must render a single element</strong></p>
+<p>这是因为 module.exports 和 ES6 里的 export default 有区别。</p>
+<p>如果是使用 es6 的写法，也就是你的组件都是通过 export default 导出的，那么在 getComponent 方法里面需要加入 .default。<br>如果是使用 CommonJS 的写法，也就是通过 module.exports 导出的，那就无须加 .default 了。</p>
+<h1 id="优化结果"><a href="#优化结果" class="headerlink" title="优化结果"></a>优化结果</h1><p>经过上面的一通操作，再来看一下页面的加载速度，首先是可以明显的感知到速度变快。通过 timeline 来检测一下</p>
+<p><img src="http://blogqn.maintel.cn/QQ20180305-0.jpg?e=3097049055&amp;token=cs2nCfx72Y7hW0_NpFYzb3Jab90IJWraRtphMd-q:UamaCXTNkmvDLHeA9s6gn7wg8Js=" alt="优化结果"></p>
+<p>可以看到，速度提升了1s，对产品体验来说是一个很大的提升。</p>
+<p><em>参考资料</em></p>
+<p><a href="https://segmentfault.com/a/1190000011765141" target="_blank" rel="external">React-Router动态路由设计最佳实践</a><br><a href="https://segmentfault.com/a/1190000007141049" target="_blank" rel="external">react-router 按需加载</a></p>
+]]></content>
+    
+    <summary type="html">
+    
+      &lt;h1 id=&quot;背景&quot;&gt;&lt;a href=&quot;#背景&quot; class=&quot;headerlink&quot; title=&quot;背景&quot;&gt;&lt;/a&gt;背景&lt;/h1&gt;&lt;p&gt;目前的 APP 已经差不多有70%的业务使用 H5 来实现，但是一些页面的白屏现象严重。之前分别从&lt;a href=&quot;http://blog.
+    
+    </summary>
+    
+      <category term="前端" scheme="https://maintel.github.io/categories/%E5%89%8D%E7%AB%AF/"/>
+    
+    
+      <category term="react" scheme="https://maintel.github.io/tags/react/"/>
+    
+      <category term="动态路由" scheme="https://maintel.github.io/tags/%E5%8A%A8%E6%80%81%E8%B7%AF%E7%94%B1/"/>
+    
+  </entry>
+  
+  <entry>
     <title>原生监控WebView加载Html的过程</title>
     <link href="https://maintel.github.io//blog/2017/09/%E5%8E%9F%E7%94%9F%E7%9B%91%E6%8E%A7WebView%E5%8A%A0%E8%BD%BDHtml%E7%9A%84%E8%BF%87%E7%A8%8B-md.html"/>
     <id>https://maintel.github.io//blog/2017/09/原生监控WebView加载Html的过程-md.html</id>
@@ -1253,42 +1311,6 @@ I/System.out: 线程名称为：thread1在1490866863939离开同步块
     
     
       <category term="Restful" scheme="https://maintel.github.io/tags/Restful/"/>
-    
-  </entry>
-  
-  <entry>
-    <title>使用Hexo+GitHub Pages搭建个人博客(3)-标签与分类</title>
-    <link href="https://maintel.github.io//blog/2016/12/%E4%BD%BF%E7%94%A8Hexo-GitHubPages%E6%90%AD%E5%BB%BA%E4%B8%AA%E4%BA%BA%E5%8D%9A%E5%AE%A2-3.html"/>
-    <id>https://maintel.github.io//blog/2016/12/使用Hexo-GitHubPages搭建个人博客-3.html</id>
-    <published>2016-12-20T08:30:10.000Z</published>
-    <updated>2018-03-13T14:46:37.038Z</updated>
-    
-    <content type="html"><![CDATA[<p>本篇文章主要分享 hexo 中关于分类和标签的使用技巧</p>
-<a id="more"></a>
-<h1 id="自动添加分类标签"><a href="#自动添加分类标签" class="headerlink" title="自动添加分类标签"></a>自动添加分类标签</h1><p>通过 <code>hexo new xxx</code> 来创建一个页面，在 source/_posts 目录下找到新建的 xxx.md 文件，打开以后看到默认的内容：</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line">---</div><div class="line">title: xxx</div><div class="line">date: 2017-05-01 16:30:10</div><div class="line">tags: </div><div class="line">---</div></pre></td></tr></table></figure>
-<p>可以编辑标题、日期、标签、和内容，但是没有分类选项，我们可以手动的添加 <code>categories:</code> 来添加分类，但是每次都这样添加岂不是不够优雅，因此可以这样，找到 scaffolds/post.md 文件，打开以后发现:</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line">---</div><div class="line">title: &#123;&#123; title &#125;&#125;</div><div class="line">date: &#123;&#123; date &#125;&#125;</div><div class="line">tags:</div><div class="line">---</div></pre></td></tr></table></figure>
-<p>这不就是默认的新建内容么，我们在里面添加 <code>categories:</code> ，这样以后新建的文章都会自动添加上  <code>categories:</code> 标签了。</p>
-<h1 id="设置标签"><a href="#设置标签" class="headerlink" title="设置标签"></a>设置标签</h1><p>这里主要是说明一下如果有多个标签的时候如何设置，可以如下</p>
-<p>方法一：</p>
-<blockquote>
-<p>tages: [标签1,标签2,…标签n]</p>
-</blockquote>
-<p>方法二：</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line">tags: </div><div class="line">- gradle</div><div class="line">- 自动化</div></pre></td></tr></table></figure>
-]]></content>
-    
-    <summary type="html">
-    
-      &lt;p&gt;本篇文章主要分享 hexo 中关于分类和标签的使用技巧&lt;/p&gt;
-    
-    </summary>
-    
-      <category term="hexo" scheme="https://maintel.github.io/categories/hexo/"/>
-    
-    
-      <category term="hexo" scheme="https://maintel.github.io/tags/hexo/"/>
     
   </entry>
   

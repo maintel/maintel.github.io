@@ -69,7 +69,7 @@
 <link href="/css/main.css?v=5.1.0" rel="stylesheet" type="text/css" />
 
 
-  <meta name="keywords" content="NKD,JNI," />
+  <meta name="keywords" content="react,动态路由," />
 
 
 
@@ -87,17 +87,20 @@
 
 
 
-<meta name="description" content="概述在Android开发中有时会遇到使用JNI调用C/C++函数库的场景。一般这个时候都是使用NDK将C/C++源代码编译出so文件，然后进行调用。但是有时候会遇到另外的情况：">
-<meta name="keywords" content="NKD,JNI">
+<meta name="description" content="背景目前的 APP 已经差不多有70%的业务使用 H5 来实现，但是一些页面的白屏现象严重。之前分别从原生层面对 WebView 加载 HTML 以及 H5 层面的 HTML 的加载过程进行了分析，确定出加载的耗时主要出现在渲染阶段，但是页面本身并不复杂，dom 的结构也很简单，应该渲染很快才对，所以又通过 chrome 的 timeline 来进行更详细分析的开发文档，结果如下图，可以确定出在一">
+<meta name="keywords" content="react,动态路由">
 <meta property="og:type" content="article">
-<meta property="og:title" content="NKD中使用第三方SO">
-<meta property="og:url" content="https://maintel.github.io/blog/2017/01/NKD中使用第三方SO.html">
+<meta property="og:title" content="使用动态路由优化H5加载速度">
+<meta property="og:url" content="https://maintel.github.io/blog/2017/09/使用动态路由优化加载速度.html">
 <meta property="og:site_name" content="Maintel&#39;s notes">
-<meta property="og:description" content="概述在Android开发中有时会遇到使用JNI调用C/C++函数库的场景。一般这个时候都是使用NDK将C/C++源代码编译出so文件，然后进行调用。但是有时候会遇到另外的情况：">
-<meta property="og:updated_time" content="2018-03-13T14:46:37.021Z">
+<meta property="og:description" content="背景目前的 APP 已经差不多有70%的业务使用 H5 来实现，但是一些页面的白屏现象严重。之前分别从原生层面对 WebView 加载 HTML 以及 H5 层面的 HTML 的加载过程进行了分析，确定出加载的耗时主要出现在渲染阶段，但是页面本身并不复杂，dom 的结构也很简单，应该渲染很快才对，所以又通过 chrome 的 timeline 来进行更详细分析的开发文档，结果如下图，可以确定出在一">
+<meta property="og:image" content="http://blogqn.maintel.cn/QQ20180305-175335@2x.png?e=3097043637&token=cs2nCfx72Y7hW0_NpFYzb3Jab90IJWraRtphMd-q:OLB8NxtvoFFxegzb60x69sStyAQ=">
+<meta property="og:image" content="http://blogqn.maintel.cn/QQ20180305-0.jpg?e=3097049055&token=cs2nCfx72Y7hW0_NpFYzb3Jab90IJWraRtphMd-q:UamaCXTNkmvDLHeA9s6gn7wg8Js=">
+<meta property="og:updated_time" content="2018-03-14T14:54:12.970Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="NKD中使用第三方SO">
-<meta name="twitter:description" content="概述在Android开发中有时会遇到使用JNI调用C/C++函数库的场景。一般这个时候都是使用NDK将C/C++源代码编译出so文件，然后进行调用。但是有时候会遇到另外的情况：">
+<meta name="twitter:title" content="使用动态路由优化H5加载速度">
+<meta name="twitter:description" content="背景目前的 APP 已经差不多有70%的业务使用 H5 来实现，但是一些页面的白屏现象严重。之前分别从原生层面对 WebView 加载 HTML 以及 H5 层面的 HTML 的加载过程进行了分析，确定出加载的耗时主要出现在渲染阶段，但是页面本身并不复杂，dom 的结构也很简单，应该渲染很快才对，所以又通过 chrome 的 timeline 来进行更详细分析的开发文档，结果如下图，可以确定出在一">
+<meta name="twitter:image" content="http://blogqn.maintel.cn/QQ20180305-175335@2x.png?e=3097043637&token=cs2nCfx72Y7hW0_NpFYzb3Jab90IJWraRtphMd-q:OLB8NxtvoFFxegzb60x69sStyAQ=">
 
 
 
@@ -125,13 +128,13 @@
 
 
 
-  <link rel="canonical" href="https://maintel.github.io/blog/2017/01/NKD中使用第三方SO.html"/>
+  <link rel="canonical" href="https://maintel.github.io/blog/2017/09/使用动态路由优化加载速度.html"/>
 
 
 
 
 
-  <title> NKD中使用第三方SO | Maintel's notes </title>
+  <title> 使用动态路由优化H5加载速度 | Maintel's notes </title>
 </head>
 
 <body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
@@ -280,7 +283,7 @@
   
 
   <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
-    <link itemprop="mainEntityOfPage" href="https://maintel.github.io/blog/2017/01/NKD中使用第三方SO.html">
+    <link itemprop="mainEntityOfPage" href="https://maintel.github.io/blog/2017/09/使用动态路由优化加载速度.html">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="name" content="Maintel">
@@ -301,7 +304,7 @@
             
             
               
-                NKD中使用第三方SO
+                使用动态路由优化H5加载速度
               
             
           </h1>
@@ -316,8 +319,8 @@
               
                 <span class="post-meta-item-text">发表于</span>
               
-              <time title="创建于" itemprop="dateCreated datePublished" datetime="2017-01-17T16:05:26+08:00">
-                2017-01-17
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2017-09-17T22:34:31+08:00">
+                2017-09-17
               </time>
             
 
@@ -339,8 +342,8 @@
               
               
                 <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/android技术/" itemprop="url" rel="index">
-                    <span itemprop="name">android技术</span>
+                  <a href="/categories/前端/" itemprop="url" rel="index">
+                    <span itemprop="name">前端</span>
                   </a>
                 </span>
 
@@ -356,7 +359,7 @@
 
           
           
-             <span id="/blog/2017/01/NKD中使用第三方SO.html" class="leancloud_visitors" data-flag-title="NKD中使用第三方SO">
+             <span id="/blog/2017/09/使用动态路由优化加载速度.html" class="leancloud_visitors" data-flag-title="使用动态路由优化H5加载速度">
                <span class="post-meta-divider">|</span>
                <span class="post-meta-item-icon">
                  <i class="fa fa-eye"></i>
@@ -385,39 +388,40 @@
       
 
       
-        <h1 id="概述"><a href="#概述" class="headerlink" title="概述"></a>概述</h1><p>在<code>Android</code>开发中有时会遇到使用<code>JNI</code>调用<code>C/C++</code>函数库的场景。一般这个时候都是使用<code>NDK</code>将<code>C/C++</code>源代码编译出<code>so</code>文件，然后进行调用。但是有时候会遇到另外的情况：</p>
-<a id="more"></a>
-<pre><code>我们在NDK项目中还要再引入其他第三方的SO库
-</code></pre><p>这个时候该怎么编译呢？</p>
-<pre><code>通过使用动态函数库的调用方法，直接包含其头文件，便可以直接调用库中的类和方法。
-</code></pre><p>具体使用过程可以分为两步：</p>
+        <h1 id="背景"><a href="#背景" class="headerlink" title="背景"></a>背景</h1><p>目前的 APP 已经差不多有70%的业务使用 H5 来实现，但是一些页面的白屏现象严重。之前分别从<a href="http://blog.maintel.cn/blog/2017/09/%E5%8E%9F%E7%94%9F%E7%9B%91%E6%8E%A7WebView%E5%8A%A0%E8%BD%BDHtml%E7%9A%84%E8%BF%87%E7%A8%8B-md.html" target="_blank" rel="external">原生层面</a>对 WebView 加载 HTML 以及 H5 层面的 <a href="http://blog.maintel.cn/blog/2017/09/window-performance%E5%88%86%E6%9E%90Html%E5%8A%A0%E8%BD%BD%E8%BF%87%E7%A8%8B.html" target="_blank" rel="external">HTML 的加载过程</a>进行了分析，确定出加载的耗时主要出现在渲染阶段，但是页面本身并不复杂，dom 的结构也很简单，应该渲染很快才对，所以又通过 chrome 的 timeline 来进行更详细分析的<a href="https://developers.google.com/web/tools/chrome-devtools/evaluate-performance/" target="_blank" rel="external">开发文档</a>，结果如下图，可以确定出在一次加载过程中主要的耗时在 JS 的运算上面。</p>
+<p><img src="http://blogqn.maintel.cn/QQ20180305-175335@2x.png?e=3097043637&amp;token=cs2nCfx72Y7hW0_NpFYzb3Jab90IJWraRtphMd-q:OLB8NxtvoFFxegzb60x69sStyAQ=" alt="js 加载耗时"></p>
+<p>由此可以引发出一些思考，因为用来做分析的页面本身很简单，没有很多的 js 运算才对。</p>
+<h1 id="分析"><a href="#分析" class="headerlink" title="分析"></a>分析</h1><p>经过一系列的监控发现加载过程的主要耗时在 js 的运算上面，目标页面并不复杂，仅仅是加载了一个列表而已，没有大量的业务需要进行 js 运算，那这些 js 都是哪来的？又查看了加载以后的 js 竟然有接近 2M，这显然是不正常的，原因出在哪？答案就在 react 项目的打包上，虽然我们的项目已经使用了多页面，但是实际上并不能叫多页面，更准确的应该叫多模块才对，一个模块的所有页面全部在一个总的路由下面，即在一个 html 中，同一模块下的所有页面使用一个 js，而即使通过路由加载一个很简单的页面也有把所有的这些 js 全部加载进来，这些势必造成了长时间的运算。</p>
+<p>问题找到了，经过查阅资料发现比较好的解决办法就是使用动态路由。</p>
+<h1 id="现有路由"><a href="#现有路由" class="headerlink" title="现有路由"></a>现有路由</h1><p>现在林林总总路由加起来有二十多个。经过打包以后的js大小有2M多。这就势必拖慢了加载的速度，在不考虑优化 js 逻辑相关的代码前，使用动态路由技术来对代码进行分离，做到按需加载应该能够提高加载速度。</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div></pre></td><td class="code"><pre><div class="line"> &lt;Route path=<span class="string">"/"</span> component=&#123;WaterIndex&#125; /&gt;</div><div class="line">  &lt;Route path="/AddWaterMeter" component=&#123;AddWaterMeter&#125; /&gt;</div><div class="line">  &lt;Route path="/ConfirmMeter" component=&#123;ConfirmMeter&#125; /&gt;</div><div class="line"></div><div class="line">  ...</div><div class="line"></div><div class="line">  &lt;Route path="/FeedbackList" component=&#123;FeedbackList&#125; /&gt;</div><div class="line">  &lt;Route path="/PaymentHelp" component=&#123;PaymentHelp&#125; /&gt;</div><div class="line">&lt;/Router&gt;</div></pre></td></tr></table></figure>
+<h1 id="动态路由"><a href="#动态路由" class="headerlink" title="动态路由"></a>动态路由</h1><p>原理就是将当前的代码在打包过程中分拆成多个小的包，在用户浏览过程中进行按需加载。<a href="https://react-guide.github.io/react-router-cn/docs/guides/advanced/DynamicRouting.html" target="_blank" rel="external">示例代码</a></p>
+<h2 id="Webpack-配置"><a href="#Webpack-配置" class="headerlink" title="Webpack 配置"></a>Webpack 配置</h2><p>首先在 webpack.config.js 的 output 内加上 chunkFilename</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div></pre></td><td class="code"><pre><div class="line">output: &#123;</div><div class="line">    <span class="attr">path</span>: path.join(__dirname, <span class="string">'/../dist/assets'</span>),</div><div class="line">    <span class="attr">filename</span>: <span class="string">'app.js'</span>,</div><div class="line">    <span class="attr">publicPath</span>: defaultSettings.publicPath,</div><div class="line">    <span class="comment">// 添加 chunkFilename</span></div><div class="line">    chunkFilename: <span class="string">'[name].[chunkhash:5].chunk.js'</span>,</div><div class="line">&#125;,</div></pre></td></tr></table></figure>
+<p>name 是在代码里为创建的 chunk 指定的名字，如果代码中没指定则 webpack 默认分配 id 作为 name。chunkhash 是文件的 hash 码，这里只使用前五位。</p>
+<h2 id="路由配置"><a href="#路由配置" class="headerlink" title="路由配置"></a>路由配置</h2><p>之前的路由就像上面配置的一样，现在修改成如下的样子</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">const</span> AddWaterMeter = <span class="function">(<span class="params">location, callback</span>) =&gt;</span> &#123;</div><div class="line">  <span class="built_in">require</span>.ensure([], <span class="built_in">require</span> =&gt; &#123;</div><div class="line">    callback(<span class="literal">null</span>, <span class="built_in">require</span>(<span class="string">'./views/AddWaterMeter'</span>).default)</div><div class="line">  &#125;, <span class="string">'AddWaterMeter'</span>)</div><div class="line">&#125;</div><div class="line"></div><div class="line"><span class="keyword">const</span> WaterMeterList = <span class="function">(<span class="params">location, callback</span>) =&gt;</span> &#123;</div><div class="line">  <span class="built_in">require</span>.ensure([], <span class="built_in">require</span> =&gt; &#123;</div><div class="line">    callback(<span class="literal">null</span>, <span class="built_in">require</span>(<span class="string">'./views/WaterMeterList'</span>).default)</div><div class="line">  &#125;, <span class="string">'WaterMeterList'</span>)</div><div class="line">&#125;</div><div class="line"></div><div class="line"><span class="keyword">const</span> ConfirmMeter = <span class="function">(<span class="params">location, callback</span>) =&gt;</span> &#123;</div><div class="line">  <span class="built_in">require</span>.ensure([], <span class="built_in">require</span> =&gt; &#123;</div><div class="line">    callback(<span class="literal">null</span>, <span class="built_in">require</span>(<span class="string">'./views/ConfirmMeter'</span>).default)</div><div class="line">  &#125;, <span class="string">'ConfirmMeter'</span>)</div><div class="line">&#125;</div><div class="line"></div><div class="line">ReactDOM.render(</div><div class="line">  &lt;Router</div><div class="line">    history=&#123;hashHistory&#125;</div><div class="line">    render=&#123;applyRouterMiddleware(useScroll())&#125;</div><div class="line">  &gt;</div><div class="line">    &lt;Route path="/" Component=&#123;WaterIndex&#125;&gt;</div><div class="line">      &lt;Route path="AddWaterMeter" Component=&#123;AddWaterMeter&#125; /&gt;</div><div class="line">      &lt;Route path="ConfirmMeter" getComponent=&#123;ConfirmMeter&#125; /&gt;</div><div class="line">      &lt;Route path="WaterMeterList" getComponent=&#123;WaterMeterList&#125; /&gt;</div><div class="line"></div><div class="line">      ...</div><div class="line"></div><div class="line">      &lt;Route path="FeedbackList" getComponent=&#123;FeedbackList&#125; /&gt;</div><div class="line">      &lt;Route path="PaymentHelp" getComponent=&#123;PaymentHelp&#125; /&gt;</div><div class="line">    &lt;/Route&gt;</div><div class="line">  &lt;/Router&gt;,</div><div class="line">  document.getElementById('app')</div><div class="line">)</div></pre></td></tr></table></figure>
+<p>history 不变，将创建的路由传递进去。有几个属性的说明</p>
 <ul>
-<li><p>编写JNI文件包含第三方库的头文件。</p>
+<li><p>path</p>
+<p>匹配路由，和之前的定义一样</p>
 </li>
-<li><p>编写MK文件引入预编译库（即第三方库）。</p>
+<li><p>getComponent</p>
+<p>对应于以前的 component 属性，但是这个方法是异步的，也就是当路由匹配时，才会调用这个方法。</p>
+<p>这里面有个 require.ensure 方法</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line"><span class="built_in">require</span>.ensure(dependencies, callback, chunkName)</div></pre></td></tr></table></figure>
+<p>这是 webpack 提供的方法，这也是按需加载的核心方法。第一个参数是依赖，第二个是回调函数，第三个就是上面提到的 chunkName，用来指定这个 chunk file 的 name。</p>
 </li>
 </ul>
-<h1 id="举个例子"><a href="#举个例子" class="headerlink" title="举个例子"></a>举个例子</h1><p>拿现在项目中遇到的一个具体情景：</p>
-<p>现在手头有一个USB设备，公司要求实现在<code>windows</code>、<code>Android</code>、<code>Linux嵌入式</code>三平台通用的USB驱动库，然后各个平台只用做小量修改即可使用。经过评估决定使用git上的一个开源项目<a href="https://github.com/libusb/libusb" target="_blank" rel="external">libusb</a>来实现，当然可以直接使用源码来编译一个so出来，但是这样不够B格，而且实际使用过程中还要引入另外一个库文件，所以这里使用上面说的方式来调用，如下。</p>
-<h1 id="编写JNI文件"><a href="#编写JNI文件" class="headerlink" title="编写JNI文件"></a>编写JNI文件</h1><p>在要编写的源文件目录下新建<code>include</code>文件夹(其实这个随便)，将要使用的函数所在的头文件放入其中，如：libusb.h。</p>
-<p>在我们的源码中包含这个头文件</p>
-<figure class="highlight c"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">"include/libusb.h"</span></span></div></pre></td></tr></table></figure>
-<p>然后直接在需要使用的位置调用相应的函数即可：</p>
-<figure class="highlight c"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div></pre></td><td class="code"><pre><div class="line"><span class="function">JNIEXPORT <span class="keyword">void</span> JNICALL <span class="title">Java_com_yannan_usbtest_UsbTest_libUsbInit</span></span></div><div class="line">        <span class="params">(JNIEnv *env, jclass jobj)</span> &#123;</div><div class="line">    <span class="keyword">if</span> (libusb_init(<span class="literal">NULL</span>) &lt; <span class="number">0</span>)</div><div class="line">	&#123;</div><div class="line">		LOGD(<span class="string">"VeinSensorBase::Open(): libusb_init() &lt;0\n"</span>);</div><div class="line">	&#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
-<h1 id="编译MK文件"><a href="#编译MK文件" class="headerlink" title="编译MK文件"></a>编译MK文件</h1><p>首先将第三方库作为预编译引入</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div></pre></td><td class="code"><pre><div class="line">LOCAL_PATH := $(call my-dir)  </div><div class="line"></div><div class="line">include $(CLEAR_VARS)  </div><div class="line">LOCAL_MODULE := usb_pre   </div><div class="line">LOCAL_SRC_FILES := usb/libusb-1.0.so           </div><div class="line">include $(PREBUILT_SHARED_LIBRARY)</div><div class="line"></div><div class="line"></div><div class="line">include $(CLEAR_VARS)  </div><div class="line">LOCAL_MODULE    := test </div><div class="line">LOCAL_SRC_FILES := usb_test.c</div><div class="line">LOCAL_SHARED_LIBRARIES := usb_pre</div><div class="line">LOCAL_LDLIBS := -llog  </div><div class="line">include $(BUILD_SHARED_LIBRARY)</div></pre></td></tr></table></figure>
-<p>其中：</p>
-<ul>
-<li><p><code>LOCAL_MODULE := usb_pre</code> 给这个第三方库取一个名字，不需要与原来的名字相同</p>
-</li>
-<li><p><code>LOCAL_SRC_FILES := usb/libusb-1.0.so</code> 表示这个库的路径，是在MK文件的目录下的<code>usb</code>目录中</p>
-</li>
-<li><p><code>PREBUILT_SHARED_LIBRARY</code> 表示这是一个共享库，即so库。</p>
-</li>
-<li><p><code>LOCAL_SHARED_LIBRARIES := usb_pre</code> 这一步则表示此模块依赖于上面命名的预编译库。</p>
-</li>
-</ul>
-<p>然后执行<code>ndk-build</code>编译即可，此时在libs文件夹中会生成两个so文件，分别为<code>libtest.so</code>和<code>libusb-1.0.so</code>,都拷贝到项目中就可以了。</p>
+<p>这里有可能会有一个异常:</p>
+<p><strong>The root route must render a single element</strong></p>
+<p>这是因为 module.exports 和 ES6 里的 export default 有区别。</p>
+<p>如果是使用 es6 的写法，也就是你的组件都是通过 export default 导出的，那么在 getComponent 方法里面需要加入 .default。<br>如果是使用 CommonJS 的写法，也就是通过 module.exports 导出的，那就无须加 .default 了。</p>
+<h1 id="优化结果"><a href="#优化结果" class="headerlink" title="优化结果"></a>优化结果</h1><p>经过上面的一通操作，再来看一下页面的加载速度，首先是可以明显的感知到速度变快。通过 timeline 来检测一下</p>
+<p><img src="http://blogqn.maintel.cn/QQ20180305-0.jpg?e=3097049055&amp;token=cs2nCfx72Y7hW0_NpFYzb3Jab90IJWraRtphMd-q:UamaCXTNkmvDLHeA9s6gn7wg8Js=" alt="优化结果"></p>
+<p>可以看到，速度提升了1s，对产品体验来说是一个很大的提升。</p>
+<p><em>参考资料</em></p>
+<p><a href="https://segmentfault.com/a/1190000011765141" target="_blank" rel="external">React-Router动态路由设计最佳实践</a><br><a href="https://segmentfault.com/a/1190000007141049" target="_blank" rel="external">react-router 按需加载</a></p>
 
       
     </div>
@@ -447,9 +451,9 @@
       
         <div class="post-tags">
           
-            <a href="/tags/NKD/" rel="tag"># NKD</a>
+            <a href="/tags/react/" rel="tag"># react</a>
           
-            <a href="/tags/JNI/" rel="tag"># JNI</a>
+            <a href="/tags/动态路由/" rel="tag"># 动态路由</a>
           
         </div>
       
@@ -462,8 +466,8 @@
         <div class="post-nav">
           <div class="post-nav-next post-nav-item">
             
-              <a href="/blog/2017/01/小心JNI中的内存泄露.html" rel="next" title="小心JNI中的内存泄露">
-                <i class="fa fa-chevron-left"></i> 小心JNI中的内存泄露
+              <a href="/blog/2017/09/原生监控WebView加载Html的过程-md.html" rel="next" title="原生监控WebView加载Html的过程">
+                <i class="fa fa-chevron-left"></i> 原生监控WebView加载Html的过程
               </a>
             
           </div>
@@ -472,8 +476,8 @@
 
           <div class="post-nav-prev post-nav-item">
             
-              <a href="/blog/2017/02/Retrofit、OKHttp访问接口时添加公共参数.html" rel="prev" title="Retrofit、OKHttp访问接口时添加公共参数">
-                Retrofit、OKHttp访问接口时添加公共参数 <i class="fa fa-chevron-right"></i>
+              <a href="/blog/2017/09/微信公众号开发进行本地调试的方法.html" rel="prev" title="微信公众号开发进行本地调试的方法">
+                微信公众号开发进行本地调试的方法 <i class="fa fa-chevron-right"></i>
               </a>
             
           </div>
@@ -639,7 +643,7 @@
             
 
             
-              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#概述"><span class="nav-number">1.</span> <span class="nav-text">概述</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#举个例子"><span class="nav-number">2.</span> <span class="nav-text">举个例子</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#编写JNI文件"><span class="nav-number">3.</span> <span class="nav-text">编写JNI文件</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#编译MK文件"><span class="nav-number">4.</span> <span class="nav-text">编译MK文件</span></a></li></ol></div>
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#背景"><span class="nav-number">1.</span> <span class="nav-text">背景</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#分析"><span class="nav-number">2.</span> <span class="nav-text">分析</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#现有路由"><span class="nav-number">3.</span> <span class="nav-text">现有路由</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#动态路由"><span class="nav-number">4.</span> <span class="nav-text">动态路由</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#Webpack-配置"><span class="nav-number">4.1.</span> <span class="nav-text">Webpack 配置</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#路由配置"><span class="nav-number">4.2.</span> <span class="nav-text">路由配置</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#优化结果"><span class="nav-number">5.</span> <span class="nav-text">优化结果</span></a></li></ol></div>
             
 
           </div>
