@@ -636,6 +636,43 @@
   </entry>
   
   <entry>
+    <title>git 使用中出现问题</title>
+    <link href="https://maintel.github.io//blog/2017/03/encountered-%E9%94%99%E8%AF%AF.html"/>
+    <id>https://maintel.github.io//blog/2017/03/encountered-错误.html</id>
+    <published>2017-03-15T15:26:33.000Z</published>
+    <updated>2018-03-15T15:36:04.658Z</updated>
+    
+    <content type="html"><![CDATA[<hr>
+<p><em>2018-03-15更新</em></p>
+<h1 id="Fatal-HttpRequestException-encountered"><a href="#Fatal-HttpRequestException-encountered" class="headerlink" title="Fatal: HttpRequestException encountered."></a>Fatal: HttpRequestException encountered.</h1><p>git 提交时出现 Failed with error: Fatal: HttpRequestException encountered 错误，并且一直提示登录。</p>
+<p>经过查阅资料发现是 git 官方进行了更新(<a href="https://githubengineering.com/crypto-removal-notice/" target="_blank" rel="external">参看这里</a>)。主要是从2018年2月8号开始禁用一下内容：</p>
+<ul>
+<li><p>TLSv1/TLSv1.1</p>
+</li>
+<li><p>diffie-hellman-group1-sha1</p>
+</li>
+<li><p>diffie-hellman-group14-sha1</p>
+</li>
+</ul>
+<p>引起问题的就是第一条，因为 win 的 git 凭证管理器1.14以下版本不支持 TLSv1.2，所以要进行升级<a href="https://github.com/Microsoft/Git-Credential-Manager-for-Windows/releases/tag/v1.14.0" target="_blank" rel="external">下载地址</a></p>
+]]></content>
+    
+    <summary type="html">
+    
+      &lt;hr&gt;
+&lt;p&gt;&lt;em&gt;2018-03-15更新&lt;/em&gt;&lt;/p&gt;
+&lt;h1 id=&quot;Fatal-HttpRequestException-encountered&quot;&gt;&lt;a href=&quot;#Fatal-HttpRequestException-encountered&quot; class=&quot;h
+    
+    </summary>
+    
+      <category term="实用技术" scheme="https://maintel.github.io/categories/%E5%AE%9E%E7%94%A8%E6%8A%80%E6%9C%AF/"/>
+    
+    
+      <category term="git" scheme="https://maintel.github.io/tags/git/"/>
+    
+  </entry>
+  
+  <entry>
     <title>jenkins+gradle+git持续集成</title>
     <link href="https://maintel.github.io//blog/2017/03/jenkins-gradle-git%E6%8C%81%E7%BB%AD%E9%9B%86%E6%88%90.html"/>
     <id>https://maintel.github.io//blog/2017/03/jenkins-gradle-git持续集成.html</id>
@@ -886,7 +923,7 @@ strategy mechanism. You can inspect the dependency tree by running ./gradlew :ap
     <link href="https://maintel.github.io//blog/2017/02/git%E4%BD%BF%E7%94%A8%E7%AC%94%E8%AE%B0.html"/>
     <id>https://maintel.github.io//blog/2017/02/git使用笔记.html</id>
     <published>2017-02-15T08:06:05.000Z</published>
-    <updated>2018-03-13T14:46:37.025Z</updated>
+    <updated>2018-03-15T15:25:44.692Z</updated>
     
     <content type="html"><![CDATA[<p>平时工作git使用过程中的一些常用命令，或者遇到的一些问题，留作记录。</p>
 <a id="more"></a>
@@ -944,7 +981,7 @@ strategy mechanism. You can inspect the dependency tree by running ./gradlew :ap
     
     </summary>
     
-      <category term="git" scheme="https://maintel.github.io/categories/git/"/>
+      <category term="实用技术" scheme="https://maintel.github.io/categories/%E5%AE%9E%E7%94%A8%E6%8A%80%E6%9C%AF/"/>
     
     
       <category term="git" scheme="https://maintel.github.io/tags/git/"/>
@@ -1080,9 +1117,9 @@ strategy mechanism. You can inspect the dependency tree by running ./gradlew :ap
       <category term="android技术" scheme="https://maintel.github.io/categories/android%E6%8A%80%E6%9C%AF/"/>
     
     
-      <category term="JNI" scheme="https://maintel.github.io/tags/JNI/"/>
-    
       <category term="NKD" scheme="https://maintel.github.io/tags/NKD/"/>
+    
+      <category term="JNI" scheme="https://maintel.github.io/tags/JNI/"/>
     
   </entry>
   
@@ -1273,44 +1310,6 @@ I/System.out: 线程名称为：thread1在1490866863939离开同步块
     
     
       <category term="android单元测试" scheme="https://maintel.github.io/tags/android%E5%8D%95%E5%85%83%E6%B5%8B%E8%AF%95/"/>
-    
-  </entry>
-  
-  <entry>
-    <title>Restful初见</title>
-    <link href="https://maintel.github.io//blog/2016/12/Restful%E5%88%9D%E8%A7%81.html"/>
-    <id>https://maintel.github.io//blog/2016/12/Restful初见.html</id>
-    <published>2016-12-21T02:30:27.000Z</published>
-    <updated>2018-03-13T14:46:37.039Z</updated>
-    
-    <content type="html"><![CDATA[<p>Rest 指一组架构约束条件和原则，满足这些约束条件和原则的应用程序或者设计都被称为RestFul</p>
-<p>Restful 更符合Http的设计规范，使用了HTTP标准方法：</p>
-<ul>
-<li>HEAD    只获取某个资源的头部信息。比如只想了解某个文件的大小，某个资源的修改日期等</li>
-<li>GET    获取资源</li>
-<li>POST    创建资源</li>
-<li>PATCH    更新资源的部分属性。因为 PATCH 比较新，而且规范比较复杂，所以真正实现的比较少，一般都是用 POST 替代</li>
-<li>PUT    替换资源，客户端需要提供新建资源的所有属性。如果新内容为空，要设置 Content-Length 为 0，以区别错误信息</li>
-<li>DELETE    删除资源</li>
-</ul>
-<p>所有的操作都是针对资源的</p>
-<p>资源又是什么？</p>
-<p>服务程序状态和功能都能被称为资源。是一个概念实体，它向客户端公开。资源的例子有：应用程序对象、数据库记录、算法等等。每个资源都使用 URI (Universal Resource Identifier) 得到一个唯一的地址。所有资源都共享统一的接口，以便在客户端和服务器之间传输状态。</p>
-]]></content>
-    
-    <summary type="html">
-    
-      &lt;p&gt;Rest 指一组架构约束条件和原则，满足这些约束条件和原则的应用程序或者设计都被称为RestFul&lt;/p&gt;
-&lt;p&gt;Restful 更符合Http的设计规范，使用了HTTP标准方法：&lt;/p&gt;
-&lt;ul&gt;
-&lt;li&gt;HEAD    只获取某个资源的头部信息。比如只想了解某个文件的大
-    
-    </summary>
-    
-      <category term="Http" scheme="https://maintel.github.io/categories/Http/"/>
-    
-    
-      <category term="Restful" scheme="https://maintel.github.io/tags/Restful/"/>
     
   </entry>
   
