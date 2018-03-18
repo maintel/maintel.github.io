@@ -1,0 +1,992 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+<html class="theme-next pisces use-motion" lang="zh-Hans">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.1.4" rel="stylesheet" type="text/css" />
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/favicon.ico?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/favicon.ico?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/favicon.ico?v=5.1.4">
+
+
+  <link rel="mask-icon" href="/favicon.ico?v=5.1.4" color="#222">
+
+
+
+
+
+  <meta name="keywords" content="RxJava,操作符," />
+
+
+
+
+
+  <link rel="alternate" href="/atom.xml" title="Maintel's notes" type="application/atom+xml" />
+
+
+
+
+
+
+<meta name="description" content="背景从前年开始使用 RxJava，后来换了工作以后虽然项目中一样使用了 RxJava 但是工作的侧重点更多的转向了前端上面，现在重新回到源生上再看 RxJava 发现之前的使用都是非常基础的，RxJava 提供的如此之多的操作符却基本上只用了那么几个，由于了解的比较少自然而然的使用过程中也会限制到使用 RxJava 解决问题的能力，所以参考 RxJava 的官方文档把几乎所有的操作符都实现了一遍，">
+<meta name="keywords" content="RxJava,操作符">
+<meta property="og:type" content="article">
+<meta property="og:title" content="RxJava操作符 —— 创建和变换">
+<meta property="og:url" content="https://maintel.github.io/blog/2018/03/RxJava操作符.html">
+<meta property="og:site_name" content="Maintel&#39;s notes">
+<meta property="og:description" content="背景从前年开始使用 RxJava，后来换了工作以后虽然项目中一样使用了 RxJava 但是工作的侧重点更多的转向了前端上面，现在重新回到源生上再看 RxJava 发现之前的使用都是非常基础的，RxJava 提供的如此之多的操作符却基本上只用了那么几个，由于了解的比较少自然而然的使用过程中也会限制到使用 RxJava 解决问题的能力，所以参考 RxJava 的官方文档把几乎所有的操作符都实现了一遍，">
+<meta property="og:updated_time" content="2018-03-18T11:26:53.484Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="RxJava操作符 —— 创建和变换">
+<meta name="twitter:description" content="背景从前年开始使用 RxJava，后来换了工作以后虽然项目中一样使用了 RxJava 但是工作的侧重点更多的转向了前端上面，现在重新回到源生上再看 RxJava 发现之前的使用都是非常基础的，RxJava 提供的如此之多的操作符却基本上只用了那么几个，由于了解的比较少自然而然的使用过程中也会限制到使用 RxJava 解决问题的能力，所以参考 RxJava 的官方文档把几乎所有的操作符都实现了一遍，">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Pisces',
+    version: '5.1.4',
+    sidebar: {"position":"right","display":"always","offset":12,"b2t":false,"scrollpercent":false,"onmobile":false},
+    fancybox: true,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    duoshuo: {
+      userId: '0',
+      author: '博主'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="https://maintel.github.io/blog/2018/03/RxJava操作符.html"/>
+
+
+
+
+
+  <title>RxJava操作符 —— 创建和变换 | Maintel's notes</title>
+  
+
+
+
+
+
+  <script type="text/javascript">
+    var _hmt = _hmt || [];
+    (function() {
+      var hm = document.createElement("script");
+      hm.src = "https://hm.baidu.com/hm.js?3e7db1112f6e1fe650d6ace646c9e4e3";
+      var s = document.getElementsByTagName("script")[0];
+      s.parentNode.insertBefore(hm, s);
+    })();
+  </script>
+
+
+
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-right page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/"  class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">Maintel's notes</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle"></p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories/index.html" rel="section">
+            
+            分类
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-about">
+          <a href="/about/index.html" rel="section">
+            
+            关于
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives/index.html" rel="section">
+            
+            归档
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags/index.html" rel="section">
+            
+            标签
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="https://maintel.github.io/blog/2018/03/RxJava操作符.html">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="Maintel">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/favicon.ico">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Maintel's notes">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">RxJava操作符 —— 创建和变换</h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2018-03-18T11:21:49+08:00">
+                2018-03-18
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/开源/" itemprop="url" rel="index">
+                    <span itemprop="name">开源</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+              <span class="post-comments-count">
+              <span class="post-meta-divider">|</span>
+              <span class="post-meta-item-icon">
+                <i class="fa fa-comment-o"></i>
+              </span>
+              
+                <a href="/blog/2018/03/RxJava操作符.html#SOHUCS" itemprop="discussionUrl">
+                  <span id="changyan_count_unit" class="post-comments-count hc-comment-count" data-xid="/blog/2018/03/RxJava操作符.html" itemprop="commentsCount"></span>
+                </a>
+              
+            
+          
+
+          
+          
+             <span id="/blog/2018/03/RxJava操作符.html" class="leancloud_visitors" data-flag-title="RxJava操作符 —— 创建和变换">
+               <span class="post-meta-divider">|</span>
+               <span class="post-meta-item-icon">
+                 <i class="fa fa-eye"></i>
+               </span>
+               
+                 <span class="post-meta-item-text">阅读次数&#58;</span>
+               
+                 <span class="leancloud-visitors-count"></span>
+             </span>
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <h1 id="背景"><a href="#背景" class="headerlink" title="背景"></a>背景</h1><p>从前年开始使用 RxJava，后来换了工作以后虽然项目中一样使用了 RxJava 但是工作的侧重点更多的转向了前端上面，现在重新回到源生上再看 RxJava 发现之前的使用都是非常基础的，RxJava 提供的如此之多的操作符却基本上只用了那么几个，由于了解的比较少自然而然的使用过程中也会限制到使用 RxJava 解决问题的能力，所以参考 RxJava 的官方文档把几乎所有的操作符都实现了一遍，现在再把这些整理一下以供自己后面随时翻阅，也可以为别人提供一下参考。</p>
+<p>需要说明的是我使用的是 RxJava 2.0.1，所有的例子都是使用 kotlin 来是实现的，所以很多地方使用了 lambda 表达式还请注意。关于 kotlin 的 lambda 表达式请参考<a href="http://www.kotlincn.net/docs/reference/lambdas.html" target="_blank" rel="external">这里</a></p>
+<p>关于 RxJava 的文章网上一搜一大把，有讲原理的有讲使用的不一而足这里推荐几个个人认为比较好的：</p>
+<ul>
+<li><a href="https://www.jianshu.com/p/a93c79e9f689" target="_blank" rel="external">这可能是最好的RxJava 2.x 入门教程</a></li>
+<li><a href="https://gank.io/post/560e15be2dca930e00da1083" target="_blank" rel="external">给 Android 开发者的 RxJava 详解– rx1.0</a></li>
+<li><a href="https://zouzhberk.github.io/rxjava-study/" target="_blank" rel="external">RxJava2 响应式编程介绍</a></li>
+<li><a href="http://reactivex.io/" target="_blank" rel="external">官方网站</a></li>
+<li><a href="https://mcxiaoke.gitbooks.io/rxdocs/content/" target="_blank" rel="external">中文翻译版文档</a></li>
+</ul>
+<p>以上</p>
+<h1 id="创建操作符"><a href="#创建操作符" class="headerlink" title="创建操作符"></a>创建操作符</h1><p>下面的操作符用来创建 Observable，<a href="https://github.com/maintel/KotlinTest/blob/master/app/src/test/java/com/demo/kotlintest/RxJavaCreateTest.kt" target="_blank" rel="external">示例代码</a></p>
+<h2 id="Create"><a href="#Create" class="headerlink" title="Create"></a><a href="http://reactivex.io/documentation/operators/create.html" target="_blank" rel="external">Create</a></h2><p>使用一个函数从头创建一个 Observable</p>
+<figure class="highlight kotlin"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div></pre></td><td class="code"><pre><div class="line">    Observable.create(<span class="keyword">object</span> : ObservableOnSubscribe&lt;String&gt; &#123;</div><div class="line">        <span class="comment">// 常规写法</span></div><div class="line">        <span class="keyword">override</span> <span class="function"><span class="keyword">fun</span> <span class="title">subscribe</span><span class="params">(e: <span class="type">ObservableEmitter</span>&lt;<span class="type">String</span>&gt;?)</span></span> &#123;</div><div class="line">            e?.onNext(<span class="string">"aaaa"</span>)</div><div class="line">            e?.onNext(<span class="string">"bbb"</span>)</div><div class="line">            e?.onNext(<span class="string">"ccc"</span>)</div><div class="line">            e?.onComplete()</div><div class="line">        &#125;</div><div class="line">    &#125;).subscribe(<span class="keyword">object</span> : Observer&lt;String&gt; &#123;</div><div class="line">        <span class="keyword">override</span> <span class="function"><span class="keyword">fun</span> <span class="title">onComplete</span><span class="params">()</span></span> &#123;</div><div class="line">            println(<span class="string">"完成"</span>)</div><div class="line">        &#125;</div><div class="line"></div><div class="line">        <span class="keyword">override</span> <span class="function"><span class="keyword">fun</span> <span class="title">onSubscribe</span><span class="params">(d: <span class="type">Disposable</span>?)</span></span> &#123;</div><div class="line">        &#125;</div><div class="line"></div><div class="line">        <span class="keyword">override</span> <span class="function"><span class="keyword">fun</span> <span class="title">onNext</span><span class="params">(value: <span class="type">String</span>?)</span></span> &#123;</div><div class="line">            println(value)</div><div class="line">        &#125;</div><div class="line"></div><div class="line">        <span class="keyword">override</span> <span class="function"><span class="keyword">fun</span> <span class="title">onError</span><span class="params">(e: <span class="type">Throwable</span>?)</span></span> &#123;</div><div class="line">        &#125;</div><div class="line">    &#125;)</div><div class="line">&#125;</div><div class="line"></div><div class="line">    <span class="comment">// 下面是 lambda 写法</span></div><div class="line"></div><div class="line">    Observable.create&lt;String&gt; &#123; e -&gt;</div><div class="line">        e.onNext(<span class="string">"a"</span>)</div><div class="line">        e.onNext(<span class="string">"b"</span>)</div><div class="line">        e.onComplete()</div><div class="line">    &#125;.subscribe &#123; value -&gt; println(value) &#125;</div></pre></td></tr></table></figure>
+<p>create 操作符默认不在任何调度器上执行</p>
+<h2 id="Defer"><a href="#Defer" class="headerlink" title="Defer"></a><a href="http://reactivex.io/documentation/operators/defer.html" target="_blank" rel="external">Defer</a></h2><p>只有当订阅者订阅时才创建 observable，并且为每个观察者创建新的 Observable，即使他们看起来是一样的</p>
+<h2 id="Empty-Never-Throw"><a href="#Empty-Never-Throw" class="headerlink" title="Empty/Never/Throw"></a><a href="http://reactivex.io/documentation/operators/empty-never-throw.html" target="_blank" rel="external">Empty/Never/Throw</a></h2><ul>
+<li><code>Empty</code><br>  创建一个不发射数据但正常终止的 Observable</li>
+<li><code>Never</code><br>  创建一个不发射数据也不终止的 Observable</li>
+<li><code>Throw</code><br>  创建一个不发射数据并以一个错误终止的 Observable</li>
+</ul>
+<h2 id="From"><a href="#From" class="headerlink" title="From"></a><a href="http://reactivex.io/documentation/operators/from.html" target="_blank" rel="external">From</a></h2><p>将其他种类的对象和数据类型转换成 Observable</p>
+<p>在 RxJava 2 中有一下几种实现</p>
+<ul>
+<li><code>fromArray</code><br>  将一个数组的每一项发射出去</li>
+<li><code>fromIterable</code><br>  将一个 Iterable 中的每一项发射出去</li>
+<li><p><code>fromPublisher</code><br>  将任意的流转换成可观察的</p>
+  <figure class="highlight kotlin"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">Observable.fromPublisher&lt;String&gt; &#123; s -&gt; s.onNext(<span class="string">"aaaa"</span>) &#125;</div><div class="line">        .subscribe &#123; value -&gt; println(value) &#125; <span class="comment">// 输出结果 aaaa</span></div></pre></td></tr></table></figure>
+</li>
+<li><p><code>fromFuture</code><br>  将 Future.get() 返回的数据发射出去</p>
+</li>
+<li><code>fromCallable</code><br>  将 Callable.call() 返回的数据发射出去</li>
+</ul>
+<h2 id="Interval"><a href="#Interval" class="headerlink" title="Interval"></a><a href="http://reactivex.io/documentation/operators/interval.html" target="_blank" rel="external">Interval</a></h2><p>创建一个在给定间隔时间发送整数数列的 Observable，注意这个默认实现除非手动停止否则<strong>不会停止</strong>。</p>
+<h2 id="Just"><a href="#Just" class="headerlink" title="Just"></a><a href="http://reactivex.io/documentation/operators/just.html" target="_blank" rel="external">Just</a></h2><p>创建一个发射给定项目的 Observable，最多有10个参数，而且在 2.0 以后版本中不再支持发送 null。</p>
+<h2 id="Range"><a href="#Range" class="headerlink" title="Range"></a><a href="http://reactivex.io/documentation/operators/range.html" target="_blank" rel="external">Range</a></h2><p>这个操作符的默认实现是发送一个特定范围内递增的整数序列，范围为 n ~ n+m-1</p>
+<p>还有另外一个实现</p>
+<ul>
+<li><code>intervalRange</code><br>  发送一个具有特定时间间隔并且特定范围的序列<figure class="highlight kotlin"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line"> <span class="comment">// 发送一个从1 到 100 首项延迟1秒 后面项间隔为2秒的序列</span></div><div class="line">Observable.intervalRange(<span class="number">1</span>, <span class="number">100</span>, <span class="number">1</span>, <span class="number">2</span>, TimeUnit.SECONDS)</div><div class="line">         .subscribe &#123; value -&gt; println(value) &#125;</div></pre></td></tr></table></figure>
+</li>
+</ul>
+<h2 id="Repeat"><a href="#Repeat" class="headerlink" title="Repeat"></a><a href="http://reactivex.io/documentation/operators/repeat.html" target="_blank" rel="external">Repeat</a></h2><p>创建一个重复发射原始序列项的 Observable，在 2.0 上有一下三种实现</p>
+<ul>
+<li><code>repeat</code><br>  无限次重复</li>
+<li><code>repeatUntil</code><br>  根据参数中的函数如果返回 true 则停止重复发送</li>
+<li><code>repeatWhen</code><br>  根据指定的 observable 发送和结束来判断原始的 observable 是否重复发送或结束</li>
+</ul>
+<h2 id="Timer"><a href="#Timer" class="headerlink" title="Timer"></a><a href="http://reactivex.io/documentation/operators/timer.html" target="_blank" rel="external">Timer</a></h2><p>创建一个 Observable 在一定的延迟以后才发送消息</p>
+<h1 id="变换操作符"><a href="#变换操作符" class="headerlink" title="变换操作符"></a>变换操作符</h1><p>下面的这些操作符可以对 observable 发射的数据做各种变换，<a href="https://github.com/maintel/KotlinTest/blob/master/app/src/test/java/com/demo/kotlintest/RxJavaTransformTest.kt" target="_blank" rel="external">示例代码</a></p>
+<h2 id="Buffer"><a href="#Buffer" class="headerlink" title="Buffer"></a><a href="http://reactivex.io/documentation/operators/buffer.html" target="_blank" rel="external">Buffer</a></h2><p>周期性的将原始 observable 发射的数据收集在一起然后发射出去。buffer 支持通过时间或者序列长度或者指定的 Observable 来建立不同大小缓冲区。</p>
+<h2 id="FlatMap"><a href="#FlatMap" class="headerlink" title="FlatMap"></a><a href="http://reactivex.io/documentation/operators/flatmap.html" target="_blank" rel="external">FlatMap</a></h2><p>将一个对原始 observable 发射的每一项数据执行变换操作，并且返回一个 observable，然后 flatMap 将每一项返回的 observables 合并（内部执行了 merge）的结果作为自己的数据序列发射。注意和下面的 map 的区别。flatMap 有以下：</p>
+<ul>
+<li><code>flatMap</code><br>  基础实现，不能保证合并以后的顺序，原因是内部执行了 merge，它还可以接受一个参数 int 设置 flatMap 原始 observable 到 observables 的最大同时订阅数，以及一个 Boolean 来确保当出现 onError 时不会终止。</li>
+<li><code>concatMap</code><br>  和 flatMap 的区别就是保证了原始的顺序</li>
+<li><code>flatMapIterable</code><br>  参数中的函数返回一个 list，flatMap 将这些 list 中的每一项作为一个消息单独发射出去。既是一个典型的一变多</li>
+<li><code>concatMapIterable</code><br>  和 flatMap 一样，不同之处在于保证了消息的顺序</li>
+<li><code>concatMapDelayError</code><br>  和 concatMap 一样，不同之处在于将变换的后的 Observable 出现的 onError 事件延迟到所有序列的最后</li>
+<li><code>concatMapEager</code><br>  一旦有订阅，操作符就会订阅所有的原始 observable，它能够确保原始消息中的第一项首先执行，注意这个操作符在使用背压的时候才有效</li>
+<li><code>concatMapEagerDelayError</code><br>  和 concatMapEager 一样，并保证了将 onError 延迟到最后再执行</li>
+<li><code>switchMap</code><br>  当转换后的 observable 没有执行完时有新转换的 observable 出现，就会切换到新的 observable 上。</li>
+<li><code>switchMapDelayError</code><br>  同上</li>
+</ul>
+<p><strong>注意：</strong> 如果任何一个通过这个 flatMap 操作产生的单独的 Observable 调用 onError 异常终止了，这个 Observable 自身会立即调用 onError 并终止，带有 DelayError 参数的除外</p>
+<h2 id="GroupBy"><a href="#GroupBy" class="headerlink" title="GroupBy"></a><a href="http://reactivex.io/documentation/operators/groupby.html" target="_blank" rel="external">GroupBy</a></h2><p>将原始 Observable 的每一项按照特定条件分组，并放在子 Observable 中发射出去。接收者可以按照设定的 Key 来对不同的子 Observable 做订阅并处理</p>
+<h2 id="Map"><a href="#Map" class="headerlink" title="Map"></a><a href="http://reactivex.io/documentation/operators/map.html" target="_blank" rel="external">Map</a></h2><p>对原始的 Observable 的每一项做变换</p>
+<ul>
+<li><code>cast</code><br>  对每一项做一次强制类型转换</li>
+</ul>
+<h2 id="Scan"><a href="#Scan" class="headerlink" title="Scan"></a><a href="http://reactivex.io/documentation/operators/scan.html" target="_blank" rel="external">Scan</a></h2><p>函数中能够获取到序列中上一个被发射出去的项以及当前项，可以根据需要进行处理，并把结果发射出去</p>
+<h2 id="Window"><a href="#Window" class="headerlink" title="Window"></a><a href="http://reactivex.io/documentation/operators/window.html" target="_blank" rel="external">Window</a></h2><p>将源 Observable 的序列按照长度或者时间或者另外一个指定的 Observable 等进行分组，和 Buffer 有点像，不同之处在于 Window 最后发射出去的是一个 observable 序列，Buffer 发射的是一个 List</p>
+<h1 id="结语"><a href="#结语" class="headerlink" title="结语"></a>结语</h1><p>以上就是 Observable 的创建以及变换操作符，这里也只是做了大致的说明因为有很多操作符有很多重载，比如 buffer 和 window 等。</p>
+
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/RxJava/" rel="tag"># RxJava</a>
+          
+            <a href="/tags/操作符/" rel="tag"># 操作符</a>
+          
+        </div>
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/blog/2017/09/微信公众号开发进行本地调试的方法.html" rel="next" title="微信公众号开发进行本地调试的方法">
+                <i class="fa fa-chevron-left"></i> 微信公众号开发进行本地调试的方法
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+
+  
+    <div class="comments" id="comments">
+      <div id="SOHUCS"></div>
+    </div>
+
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+            
+              <img class="site-author-image" itemprop="image"
+                src="/favicon.ico"
+                alt="Maintel" />
+            
+              <p class="site-author-name" itemprop="name">Maintel</p>
+              <p class="site-description motion-element" itemprop="description">不忘初心 方得始终</p>
+          </div>
+
+          <nav class="site-state motion-element">
+
+            
+              <div class="site-state-item site-state-posts">
+              
+                <a href="/archives/index.html">
+              
+                  <span class="site-state-item-count">25</span>
+                  <span class="site-state-item-name">日志</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-categories">
+                <a href="/categories/index.html">
+                  <span class="site-state-item-count">7</span>
+                  <span class="site-state-item-name">分类</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-tags">
+                <a href="/tags/index.html">
+                  <span class="site-state-item-count">31</span>
+                  <span class="site-state-item-name">标签</span>
+                </a>
+              </div>
+            
+
+          </nav>
+
+          
+            <div class="feed-link motion-element">
+              <a href="/atom.xml" rel="alternate">
+                <i class="fa fa-rss"></i>
+                RSS
+              </a>
+            </div>
+          
+
+          
+            <div class="links-of-author motion-element">
+                
+                  <span class="links-of-author-item">
+                    <a href="https://github.com/maintel" target="_blank" title="GitHub">
+                      
+                        <i class="fa fa-fw fa-globe"></i>GitHub</a>
+                  </span>
+                
+            </div>
+          
+
+          
+          
+
+          
+          
+
+          
+
+        </div>
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#背景"><span class="nav-number">1.</span> <span class="nav-text">背景</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#创建操作符"><span class="nav-number">2.</span> <span class="nav-text">创建操作符</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#Create"><span class="nav-number">2.1.</span> <span class="nav-text">Create</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Defer"><span class="nav-number">2.2.</span> <span class="nav-text">Defer</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Empty-Never-Throw"><span class="nav-number">2.3.</span> <span class="nav-text">Empty/Never/Throw</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#From"><span class="nav-number">2.4.</span> <span class="nav-text">From</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Interval"><span class="nav-number">2.5.</span> <span class="nav-text">Interval</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Just"><span class="nav-number">2.6.</span> <span class="nav-text">Just</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Range"><span class="nav-number">2.7.</span> <span class="nav-text">Range</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Repeat"><span class="nav-number">2.8.</span> <span class="nav-text">Repeat</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Timer"><span class="nav-number">2.9.</span> <span class="nav-text">Timer</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#变换操作符"><span class="nav-number">3.</span> <span class="nav-text">变换操作符</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#Buffer"><span class="nav-number">3.1.</span> <span class="nav-text">Buffer</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#FlatMap"><span class="nav-number">3.2.</span> <span class="nav-text">FlatMap</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#GroupBy"><span class="nav-number">3.3.</span> <span class="nav-text">GroupBy</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Map"><span class="nav-number">3.4.</span> <span class="nav-text">Map</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Scan"><span class="nav-number">3.5.</span> <span class="nav-text">Scan</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Window"><span class="nav-number">3.6.</span> <span class="nav-text">Window</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#结语"><span class="nav-number">4.</span> <span class="nav-text">结语</span></a></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        
+  <script async src="https://dn-lbstatics.qbox.me/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+<div class="copyright">&copy; 2016 &mdash; <span itemprop="copyrightYear">2018</span>
+  <span class="with-love">
+    <i class="fa fa-heartbeat"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Maintel</span>
+
+
+  
+</div>
+
+
+  <div class="powered-by">由 <a class="theme-link" target="_blank" href="https://hexo.io">Hexo</a> 强力驱动</div>
+
+
+
+  
+ <span class="post-meta-divider">|</span>
+  
+    <span class="site-pv">
+      总访问量 <i class="fa fa-eye"></i>
+      <span class="busuanzi-value" id="busuanzi_value_site_pv"></span>
+      次
+    </span>
+  
+
+
+
+
+
+
+        
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+  
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.4"></script>
+
+
+
+  
+  
+
+
+  <script type="text/javascript" src="/js/src/affix.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/js/src/schemes/pisces.js?v=5.1.4"></script>
+
+
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.4"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+  
+    <script type="text/javascript">
+    (function(){
+      var appid = 'cytvTnsP2';
+      var conf = '6fe2486a54f1a8b17752112807b7695b';
+      var width = window.innerWidth || document.documentElement.clientWidth;
+      if (width < 960) {
+      window.document.write('<script id="changyan_mobile_js" charset="utf-8" type="text/javascript" src="https://changyan.sohu.com/upload/mobile/wap-js/changyan_mobile.js?client_id=' + appid + '&conf=' + conf + '"><\/script>'); } else { var loadJs=function(d,a){var c=document.getElementsByTagName("head")[0]||document.head||document.documentElement;var b=document.createElement("script");b.setAttribute("type","text/javascript");b.setAttribute("charset","UTF-8");b.setAttribute("src",d);if(typeof a==="function"){if(window.attachEvent){b.onreadystatechange=function(){var e=b.readyState;if(e==="loaded"||e==="complete"){b.onreadystatechange=null;a()}}}else{b.onload=a}}c.appendChild(b)};loadJs("https://changyan.sohu.com/upload/changyan.js",function(){
+        window.changyan.api.config({appid:appid,conf:conf})});
+      }
+    })();
+    </script>
+    <script type="text/javascript" src="https://assets.changyan.sohu.com/upload/plugins/plugins.count.js"></script>
+  
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+  
+  <script src="https://cdn1.lncld.net/static/js/av-core-mini-0.6.4.js"></script>
+  <script>AV.initialize("F8P7KKR8kp3D5UvBvGoYIKOr-gzGzoHsz", "KvMFi0FwQ1mwkBbme56Vb80b");</script>
+  <script>
+    function showTime(Counter) {
+      var query = new AV.Query(Counter);
+      var entries = [];
+      var $visitors = $(".leancloud_visitors");
+
+      $visitors.each(function () {
+        entries.push( $(this).attr("id").trim() );
+      });
+
+      query.containedIn('url', entries);
+      query.find()
+        .done(function (results) {
+          var COUNT_CONTAINER_REF = '.leancloud-visitors-count';
+
+          if (results.length === 0) {
+            $visitors.find(COUNT_CONTAINER_REF).text(0);
+            return;
+          }
+
+          for (var i = 0; i < results.length; i++) {
+            var item = results[i];
+            var url = item.get('url');
+            var time = item.get('time');
+            var element = document.getElementById(url);
+
+            $(element).find(COUNT_CONTAINER_REF).text(time);
+          }
+          for(var i = 0; i < entries.length; i++) {
+            var url = entries[i];
+            var element = document.getElementById(url);
+            var countSpan = $(element).find(COUNT_CONTAINER_REF);
+            if( countSpan.text() == '') {
+              countSpan.text(0);
+            }
+          }
+        })
+        .fail(function (object, error) {
+          console.log("Error: " + error.code + " " + error.message);
+        });
+    }
+
+    function addCount(Counter) {
+      var $visitors = $(".leancloud_visitors");
+      var url = $visitors.attr('id').trim();
+      var title = $visitors.attr('data-flag-title').trim();
+      var query = new AV.Query(Counter);
+
+      query.equalTo("url", url);
+      query.find({
+        success: function(results) {
+          if (results.length > 0) {
+            var counter = results[0];
+            counter.fetchWhenSave(true);
+            counter.increment("time");
+            counter.save(null, {
+              success: function(counter) {
+                var $element = $(document.getElementById(url));
+                $element.find('.leancloud-visitors-count').text(counter.get('time'));
+              },
+              error: function(counter, error) {
+                console.log('Failed to save Visitor num, with error message: ' + error.message);
+              }
+            });
+          } else {
+            var newcounter = new Counter();
+            /* Set ACL */
+            var acl = new AV.ACL();
+            acl.setPublicReadAccess(true);
+            acl.setPublicWriteAccess(true);
+            newcounter.setACL(acl);
+            /* End Set ACL */
+            newcounter.set("title", title);
+            newcounter.set("url", url);
+            newcounter.set("time", 1);
+            newcounter.save(null, {
+              success: function(newcounter) {
+                var $element = $(document.getElementById(url));
+                $element.find('.leancloud-visitors-count').text(newcounter.get('time'));
+              },
+              error: function(newcounter, error) {
+                console.log('Failed to create');
+              }
+            });
+          }
+        },
+        error: function(error) {
+          console.log('Error:' + error.code + " " + error.message);
+        }
+      });
+    }
+
+    $(function() {
+      var Counter = AV.Object.extend("Counter");
+      if ($('.leancloud_visitors').length == 1) {
+        addCount(Counter);
+      } else if ($('.post-title-link').length > 1) {
+        showTime(Counter);
+      }
+    });
+  </script>
+
+
+
+  
+
+  
+
+  
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>
