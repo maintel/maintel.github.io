@@ -5,7 +5,7 @@
   <link href="/atom.xml" rel="self"/>
   
   <link href="https://maintel.github.io/"/>
-  <updated>2018-03-22T16:55:13.049Z</updated>
+  <updated>2018-03-22T17:21:08.807Z</updated>
   <id>https://maintel.github.io/</id>
   
   <author>
@@ -20,7 +20,7 @@
     <link href="https://maintel.github.io//blog/2018/03/RxJava%E6%93%8D%E4%BD%9C%E7%AC%A62.html"/>
     <id>https://maintel.github.io//blog/2018/03/RxJava操作符2.html</id>
     <published>2018-03-18T11:51:51.000Z</published>
-    <updated>2018-03-22T16:55:13.049Z</updated>
+    <updated>2018-03-22T17:21:08.807Z</updated>
     
     <content type="html"><![CDATA[<h1 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h1><p>本系列旨在整理总结 RxJava 2 的操作符，以供大家参考。本文内容 —— 过滤操作符。</p>
 <p>其他文章可查阅：</p>
@@ -186,6 +186,113 @@
       <category term="RxJava" scheme="https://maintel.github.io/tags/RxJava/"/>
     
       <category term="操作符" scheme="https://maintel.github.io/tags/%E6%93%8D%E4%BD%9C%E7%AC%A6/"/>
+    
+  </entry>
+  
+  <entry>
+    <title>kotlin实现回调监听</title>
+    <link href="https://maintel.github.io//blog/2018/02/kotlin%E5%AE%9E%E7%8E%B0%E5%9B%9E%E8%B0%83%E7%9B%91%E5%90%AC.html"/>
+    <id>https://maintel.github.io//blog/2018/02/kotlin实现回调监听.html</id>
+    <published>2018-02-25T17:11:47.000Z</published>
+    <updated>2018-03-22T17:22:31.262Z</updated>
+    
+    <content type="html"><![CDATA[<h1 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h1><p>之前学习了 <a href="https://blog.maintel.cn/blog/2018/03/kotlin-Lambda表达式和高阶函数.html" target="_blank" rel="external">lambda 和高阶函数</a>，在 android 开发中对 onClick 事件进行监听是一个很常用的功能，kotlin 的常规实现如下：</p>
+<figure class="highlight kotlin"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line">rootView.setOnClickListener &#123; view -&gt;</div><div class="line">    println(<span class="string">"点击了这个ID=<span class="subst">$&#123;view.id&#125;</span>的view"</span>)</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>同样在开发中不可避免的我们也要写一些自定义监听之类的代码。这个时候如果还用 java 的思想去实现的话就有点太’low’了。下面我们将两种实现作一个对比。</p>
+<h1 id="java-思想实现"><a href="#java-思想实现" class="headerlink" title="java 思想实现"></a>java 思想实现</h1><p>在 java 中我们一般的做法是这样的</p>
+<ul>
+<li>定义一个接口</li>
+<li>定义一个接口类型变量</li>
+<li>定义一个 set 方法</li>
+<li>调用 set 方法设置接口的实现类</li>
+</ul>
+<p>用 kotlin 实现就是如下</p>
+<figure class="highlight kotlin"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div></pre></td><td class="code"><pre><div class="line"><span class="class"><span class="keyword">class</span> <span class="title">MyView</span></span>&#123;</div><div class="line">    <span class="comment">//定义一个接口</span></div><div class="line">    <span class="class"><span class="keyword">interface</span> <span class="title">IOnLabelCheckedListener</span> </span>&#123;</div><div class="line">        <span class="function"><span class="keyword">fun</span> <span class="title">onLabelCheck</span><span class="params">(label: <span class="type">String</span>)</span></span></div><div class="line">    &#125;</div><div class="line">    <span class="comment">//定义一个接口类型变量</span></div><div class="line">    <span class="keyword">private</span> <span class="keyword">lateinit</span> <span class="keyword">var</span> onLabelChecked: IOnLabelCheckedListener</div><div class="line"></div><div class="line">    <span class="keyword">private</span> <span class="function"><span class="keyword">fun</span> <span class="title">initView</span><span class="params">(context: <span class="type">Context</span>)</span></span> &#123;</div><div class="line">        view.setOnCheckedChangeListener &#123; radioGroup, i -&gt;</div><div class="line">            <span class="keyword">if</span> (::onLabelChecked.isInitialized) &#123;</div><div class="line">                <span class="comment">//触发回调</span></div><div class="line">                onLabelChecked.onLabelCheck(radioGroup.findViewById&lt;RadioButton&gt;(i).text.toString())</div><div class="line">            &#125;</div><div class="line">        &#125;</div><div class="line">    &#125;</div><div class="line">    <span class="comment">//定义一个 set 方法</span></div><div class="line">    <span class="function"><span class="keyword">fun</span> <span class="title">setOnLabelCheckedListener</span><span class="params">(e: <span class="type">IOnLabelCheckedListener</span>)</span></span> &#123;</div><div class="line">        <span class="keyword">this</span>.onLabelChecked = e</div><div class="line">    &#125;</div><div class="line">&#125;</div><div class="line"></div><div class="line">      <span class="comment">// 调用set方法，通过匿名内部类实现</span></div><div class="line">        MyView.setOnLabelCheckedListener(<span class="keyword">object</span> : LabelBarView.IOnLabelCheckedListener &#123;</div><div class="line">            <span class="keyword">override</span> <span class="function"><span class="keyword">fun</span> <span class="title">onLabelCheck</span><span class="params">(label: <span class="type">String</span>)</span></span> &#123;</div><div class="line"></div><div class="line">            &#125;</div><div class="line">        &#125;)</div></pre></td></tr></table></figure>
+<h2 id="这样实现的问题"><a href="#这样实现的问题" class="headerlink" title="这样实现的问题"></a>这样实现的问题</h2><p>当然是太复杂了。而且最初的时候这样写一时搞不明白为什么 <code>MyView.setOnLabelCheckedListener</code> 方法内部不能传入 lambda 表达式，lambda 表达式的存在不就是为了替代匿名内部类嘛。而且如果这个接口定义的是一个 java 类型的接口就是可以用 lambda 表达式的。这是为什么？最后猜想是因为 kotlin 在和 java 互相调用的时候中间又包裹了一层，而我们直接使用 kotlin 来定义这个接口不存在中间这一层，而且我们定义的 set 方法又不是一个高阶函数当然不能使用 lambda 表达式。</p>
+<p>下面就用 kotlin 的思想来实现回调</p>
+<h1 id="kotlin-思想实现"><a href="#kotlin-思想实现" class="headerlink" title="kotlin 思想实现"></a>kotlin 思想实现</h1><p>kotlin 和 java 有一个重要的不同就是函数式编程。在函数式编程的思想中函数式一等公民，在使用 kotlin 时我们要多利用这种思维来编程。</p>
+<p>首先，能想到的就是函数传递，我们要用 lambda 来替代掉匿名内部类可以这样来实现</p>
+<figure class="highlight kotlin"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div></pre></td><td class="code"><pre><div class="line"><span class="comment">//从最基础的开始做，把匿名内部类通过 lambda 实现</span></div><div class="line">MyView.setOnLabelCheckedListener(<span class="keyword">object</span> : MyView.IOnLabelCheckedListener &#123;</div><div class="line">        <span class="keyword">override</span> <span class="function"><span class="keyword">fun</span> <span class="title">onLabelCheck</span><span class="params">(label: <span class="type">String</span>)</span></span> &#123;</div><div class="line">          println(label)</div><div class="line">        &#125;</div><div class="line">&#125;)</div><div class="line"><span class="comment">// 首先 MyView.IOnLabelCheckedListener 中只有一个方法 onLabelCheck(label: String)</span></div><div class="line"><span class="comment">// 因此可以写出 lambda 表达式如下</span></div><div class="line"><span class="keyword">var</span> lam: (String) -&gt; <span class="built_in">Unit</span> = &#123; label -&gt; println(label) &#125;</div></pre></td></tr></table></figure>
+<p>然后，需要把写好的 lambda 传递进去，这个时候就要求 <code>setOnLabelCheckedListener</code> 方法是一个高阶函数</p>
+<figure class="highlight kotlin"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div></pre></td><td class="code"><pre><div class="line"><span class="comment">// 这里接收一个 上面我们改造好的表达式 lam ,它内部实现应该是把 e 赋值给当前类的一个对象</span></div><div class="line"><span class="function"><span class="keyword">fun</span> <span class="title">setOnLabelCheckedListener</span><span class="params">(e: (<span class="type">String</span>)</span></span> -&gt; <span class="built_in">Unit</span>) &#123;</div><div class="line">   <span class="keyword">this</span>.lisenter = e</div><div class="line">&#125;</div><div class="line">  </div><div class="line"><span class="comment">//显然 lisenter 就应该是这样的</span></div><div class="line"><span class="keyword">lateinit</span> <span class="keyword">var</span> linsnter: (String) -&gt; <span class="built_in">Unit</span></div></pre></td></tr></table></figure>
+<p>最后使用 linsnter 进行回调</p>
+<figure class="highlight kotlin"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">private</span> <span class="function"><span class="keyword">fun</span> <span class="title">initView</span><span class="params">(context: <span class="type">Context</span>)</span></span> &#123;</div><div class="line">   view.setOnCheckedChangeListener &#123; radioGroup, i -&gt;</div><div class="line">        <span class="keyword">if</span> (::linsnter.isInitialized) &#123;</div><div class="line">            linsnter(radioGroup.findViewById&lt;RadioButton&gt;(i).text.toString())</div><div class="line">        &#125;</div><div class="line">    &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>最终代码结果：</p>
+<figure class="highlight kotlin"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div></pre></td><td class="code"><pre><div class="line"><span class="class"><span class="keyword">class</span> <span class="title">MyView</span></span>&#123;</div><div class="line">  <span class="keyword">lateinit</span> <span class="keyword">var</span> linsnter: (String) -&gt; <span class="built_in">Unit</span></div><div class="line"></div><div class="line">  <span class="keyword">private</span> <span class="function"><span class="keyword">fun</span> <span class="title">initView</span><span class="params">(context: <span class="type">Context</span>)</span></span> &#123;</div><div class="line">       view.setOnCheckedChangeListener &#123; radioGroup, i -&gt;</div><div class="line">            <span class="keyword">if</span> (::linsnter.isInitialized) &#123;</div><div class="line">                linsnter(radioGroup.findViewById&lt;RadioButton&gt;(i).text.toString())</div><div class="line">            &#125;</div><div class="line">        &#125;</div><div class="line">  &#125;</div><div class="line"></div><div class="line">  <span class="function"><span class="keyword">fun</span> <span class="title">setOnLabelCheckedListener</span><span class="params">(e: (<span class="type">String</span>)</span></span> -&gt; <span class="built_in">Unit</span>) &#123;  </div><div class="line">    <span class="keyword">this</span>.lisenter = e</div><div class="line">  &#125;</div><div class="line">&#125;</div><div class="line">    <span class="comment">// 调用时将变量 lam 省略，直接使用一个表达式</span></div><div class="line">    view.setOnLabelCheckedListener &#123; label -&gt;</div><div class="line">        println(label)</div><div class="line">    &#125;</div></pre></td></tr></table></figure>
+<h1 id="结语"><a href="#结语" class="headerlink" title="结语"></a>结语</h1><p>最终的代码和之前的代码有两个最大的不同，一是没有了接口定义，二是没有了匿名内部类。</p>
+<p>在使用 kotlin 的时候要时刻保持函数式编程的思想。</p>
+]]></content>
+    
+    <summary type="html">
+    
+      &lt;h1 id=&quot;前言&quot;&gt;&lt;a href=&quot;#前言&quot; class=&quot;headerlink&quot; title=&quot;前言&quot;&gt;&lt;/a&gt;前言&lt;/h1&gt;&lt;p&gt;之前学习了 &lt;a href=&quot;https://blog.maintel.cn/blog/2018/03/kotlin-Lambda表达式和高
+    
+    </summary>
+    
+      <category term="kotlin" scheme="https://maintel.github.io/categories/kotlin/"/>
+    
+    
+      <category term="kotlin" scheme="https://maintel.github.io/tags/kotlin/"/>
+    
+      <category term="回调" scheme="https://maintel.github.io/tags/%E5%9B%9E%E8%B0%83/"/>
+    
+  </entry>
+  
+  <entry>
+    <title>kotlin_Lambda表达式和高阶函数</title>
+    <link href="https://maintel.github.io//blog/2018/02/kotlin-Lambda%E8%A1%A8%E8%BE%BE%E5%BC%8F%E5%92%8C%E9%AB%98%E9%98%B6%E5%87%BD%E6%95%B0.html"/>
+    <id>https://maintel.github.io//blog/2018/02/kotlin-Lambda表达式和高阶函数.html</id>
+    <published>2018-02-22T17:04:00.000Z</published>
+    <updated>2018-03-22T17:21:17.126Z</updated>
+    
+    <content type="html"><![CDATA[<h1 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h1><p>kotlin 在 lambda 的使用上是很频繁的。<a href="http://www.kotlincn.net/docs/reference/lambdas.html" target="_blank" rel="external">官方文档</a>，这里主要讲一些使用的方法和一些自己的理解。</p>
+<h1 id="Lambda-表达式"><a href="#Lambda-表达式" class="headerlink" title="Lambda 表达式"></a>Lambda 表达式</h1><p>lambda 表达式就是函数的一种表现方式，一个 lambda 表达式其实就相当于一个函数，更准确的讲应该是一个未声明的函数，能够以表达式的形式进行传递。</p>
+<h2 id="使用-lambda-的好处"><a href="#使用-lambda-的好处" class="headerlink" title="使用 lambda 的好处"></a>使用 lambda 的好处</h2><ul>
+<li>代码简洁</li>
+</ul>
+<p>个人理解 lambda 表达式出现最直观的一个作用就是代码变得更简洁。比如下面的例子</p>
+<figure class="highlight kotlin"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div></pre></td><td class="code"><pre><div class="line"><span class="meta">@Test</span></div><div class="line"><span class="function"><span class="keyword">fun</span> <span class="title">test1</span><span class="params">()</span></span> &#123;</div><div class="line">    <span class="keyword">var</span> a = &#123; x: <span class="built_in">Int</span>, y: <span class="built_in">Int</span> -&gt; x + y &#125;</div><div class="line">    println(a(<span class="number">1</span>, <span class="number">3</span>)) <span class="comment">// 4</span></div><div class="line">    println(a(<span class="number">2</span>, <span class="number">3</span>)) <span class="comment">// 5</span></div><div class="line">    println(a(<span class="number">3</span>, <span class="number">3</span>)) <span class="comment">// 6</span></div><div class="line">    <span class="keyword">var</span> a1 = sum(<span class="number">1</span>, <span class="number">3</span>)</div><div class="line">    <span class="keyword">var</span> a2 = sum(<span class="number">2</span>, <span class="number">3</span>)</div><div class="line">    <span class="keyword">var</span> a3 = sum(<span class="number">3</span>, <span class="number">3</span>)</div><div class="line">    println(a1) <span class="comment">// 4</span></div><div class="line">    println(a2) <span class="comment">// 5</span></div><div class="line">    println(a3) <span class="comment">// 6</span></div><div class="line">&#125;</div><div class="line"></div><div class="line"><span class="function"><span class="keyword">fun</span> <span class="title">sum</span><span class="params">(a: <span class="type">Int</span>, b: <span class="type">Int</span>)</span></span>: <span class="built_in">Int</span> &#123;</div><div class="line">    <span class="keyword">return</span> a + b</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>很明显使用 lambda 表达式能够把代码量缩小很多，虽然只是我们看到的最直观的结果，不过这也不失为一个我们选择它的重要理由(*￣(エ)￣)。</p>
+<ul>
+<li>替代匿名内部类和匿名函数</li>
+</ul>
+<p>lambda 表达式还有一个重要的作用是替代匿名内部类和匿名函数，可以参看 java 的 lambda 来说，为什么要替代匿名内部类，除去代码更简洁以外最重要的原因是匿名内部类存在着影响应能的问题。</p>
+<p>为什么说匿名内部类会影响性能，首先，编译器会为每一个匿名内部类创建一个类文件。而每一个类在使用之前需要加载类文件并进行验证，这个过程则会影响应用的启动性能。类文件的加载很有可能是一个耗时的操作，这其中包含了磁盘IO和解压JAR文件。随着匿名内部类进行加载，其必然要占用JVM中的元空间（从Java 8开始永久代的一种替代实现）。如果匿名内部类的方法被JIT编译成机器代码，则会存储到代码缓存中。同时，匿名内部类都需要实例化成独立的对象。以上关于匿名内部类的种种会使得应用的内存占用增加。</p>
+<p>注意的一点就是 kotlin 的 lambda 表达式和 java 的 lambda 在语法上是有区别的，但是他们设计的初衷都是一样的。</p>
+<h2 id="lambda-的使用"><a href="#lambda-的使用" class="headerlink" title="lambda 的使用"></a>lambda 的使用</h2><p>kotlin 中 lambda 的语法有以下几点</p>
+<p>首先，lambda 表达式总在花括号中<code>{}</code>，完整的语法声明也应该放在其中，并有可选的类型标注， 函数体跟在一个 <code>-&gt;</code> 符号之后。如下：</p>
+<figure class="highlight kotlin"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">var</span> a = &#123; x: <span class="built_in">Int</span>, y: <span class="built_in">Int</span> -&gt; x + y &#125;  <span class="comment">//完整语法</span></div><div class="line"><span class="keyword">var</span> b: (<span class="built_in">Int</span>, <span class="built_in">Int</span>) -&gt; <span class="built_in">Int</span> = &#123; x, y -&gt; x + y &#125; <span class="comment">// 这种写法和 a 等价</span></div><div class="line"><span class="keyword">var</span> c = &#123; x: String -&gt; println(x) &#125;  <span class="comment">//无返回值</span></div><div class="line"><span class="keyword">var</span> d: (String) -&gt; <span class="built_in">Unit</span> = &#123; x -&gt; println(x) &#125; <span class="comment">// 这种写法和 c 等价</span></div></pre></td></tr></table></figure>
+<p>其次，如果只有一个参数，它允许我们不声明唯一的参数，并且隐式的声明为 it，所以上面例子中 c d 的写法可以如下：</p>
+<figure class="highlight kotlin"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">var</span> e: (String) -&gt; <span class="built_in">Unit</span> = &#123; println(it) &#125; <span class="comment">// 这种写法和 c d 等价</span></div></pre></td></tr></table></figure>
+<p>还有，如果推断出的该 lambda 的返回类型不是 Unit，那么该 lambda 主体中的最后一个（或可能是单个）表达式会视为返回值。甚至可以写在 if else 等这样的语句中，这个写法也很有用我们可以不用手动去写 return</p>
+<figure class="highlight kotlin"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">var</span> f = &#123; x: <span class="built_in">Int</span>, y: <span class="built_in">Int</span> -&gt;</div><div class="line">    <span class="keyword">if</span> (x &gt; y) &#123;</div><div class="line">      println(x)</div><div class="line">        x  <span class="comment">//返回 x</span></div><div class="line">    &#125; <span class="keyword">else</span> &#123;</div><div class="line">      println(y)</div><div class="line">        y <span class="comment">//返回 y</span></div><div class="line">    &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>当然也可以使用限定返回语法显式的返回一个值比如：</p>
+<figure class="highlight kotlin"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div></pre></td><td class="code"><pre><div class="line">observable.distinct &#123; t -&gt;</div><div class="line">          <span class="keyword">when</span> &#123;</div><div class="line">              t &lt; <span class="number">3</span> -&gt; <span class="keyword">return</span><span class="symbol">@distinct</span> <span class="string">"a"</span></div><div class="line">              t <span class="keyword">in</span> <span class="number">3.</span><span class="number">.4</span> -&gt; <span class="keyword">return</span><span class="symbol">@distinct</span> <span class="string">"b"</span></div><div class="line">              <span class="keyword">else</span> -&gt; <span class="keyword">return</span><span class="symbol">@distinct</span> <span class="string">"c"</span></div><div class="line">          &#125;</div><div class="line">      &#125;</div></pre></td></tr></table></figure>
+<p>然后在 lambda 的使用时，如果自定义一些函数想要接收表达式作为参数就不得不使用高阶函数。</p>
+<h1 id="高阶函数"><a href="#高阶函数" class="headerlink" title="高阶函数"></a>高阶函数</h1><p>高阶函数是将函数用作参数或返回值的函数。官方例子中拿 lock() 函数来展示。</p>
+<figure class="highlight kotlin"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div></pre></td><td class="code"><pre><div class="line"><span class="function"><span class="keyword">fun</span> <span class="type">&lt;T&gt;</span> <span class="title">lock</span><span class="params">(lock: <span class="type">Lock</span>, body: ()</span></span> -&gt; T): T &#123;</div><div class="line">    lock.lock()</div><div class="line">    <span class="keyword">try</span> &#123;</div><div class="line">        <span class="keyword">return</span> body()</div><div class="line">    &#125;</div><div class="line">    <span class="keyword">finally</span> &#123;</div><div class="line">        lock.unlock()</div><div class="line">    &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>分析上面的这个函数，发现它接收的参数中第一个参数是一个 Lock 对象，第二个参数是 body 一个表达式 ()-&gt; T，根据上面的 lambda 的语法可以知道它是一个不带参数并且返回 T 类型值的函数，而 lock() 函数也返回 T，可以看到在 try 中直接把 body 函数作为返回值返回了。<strong>这里就体现出来了 lambda 表达式可以作为参数传递</strong></p>
+<p>高阶函数的好处是显而易见的，它可以降低我们代码的复杂度，使我们的代码变得简洁。就比如下面的代码，如果使用高阶函数代码量会减少很多。</p>
+<figure class="highlight kotlin"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div></pre></td><td class="code"><pre><div class="line"><span class="meta">@Test</span></div><div class="line"><span class="function"><span class="keyword">fun</span> <span class="title">test4</span><span class="params">()</span></span> &#123;</div><div class="line">    higher(<span class="number">9</span>, &#123; t -&gt; <span class="string">"aaaa::<span class="variable">$t</span>"</span> &#125;)</div><div class="line">    <span class="keyword">var</span> a = <span class="number">9</span></div><div class="line">    normal(a, getString(a))</div><div class="line">&#125;</div><div class="line"></div><div class="line"><span class="function"><span class="keyword">fun</span> <span class="title">getString</span><span class="params">(a: <span class="type">Int</span>)</span></span>: String &#123;</div><div class="line">    <span class="keyword">return</span> <span class="string">"nnn<span class="variable">$a</span>"</span></div><div class="line">&#125;</div><div class="line"></div><div class="line"><span class="function"><span class="keyword">fun</span> <span class="title">normal</span><span class="params">(a: <span class="type">Int</span>, b: <span class="type">String</span>)</span></span> &#123;</div><div class="line">    <span class="keyword">if</span> (a &gt; <span class="number">10</span>) &#123;</div><div class="line">        println(b)</div><div class="line">    &#125; <span class="keyword">else</span> &#123;</div><div class="line">        println(<span class="string">"nnnn:<span class="variable">$b</span>"</span>)</div><div class="line">    &#125;</div><div class="line">&#125;</div><div class="line"><span class="comment">//使用高阶函数 一个函数就搞定了</span></div><div class="line"><span class="function"><span class="keyword">fun</span> <span class="title">higher</span><span class="params">(a: <span class="type">Int</span>, b: (<span class="type">a</span>: <span class="type">Int</span>)</span></span> -&gt; String) &#123;</div><div class="line">    <span class="keyword">if</span> (a &gt; <span class="number">10</span>) &#123;</div><div class="line">        println(b(a))</div><div class="line">    &#125; <span class="keyword">else</span> &#123;</div><div class="line">        println(<span class="string">"aaaa:<span class="subst">$&#123;b(a)&#125;</span>"</span>)</div><div class="line">    &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<h1 id="结语"><a href="#结语" class="headerlink" title="结语"></a>结语</h1><p>以上就是关于 lambda 和 高阶函数的全部内容。仅仅是一些个人理解和总结，错误疏漏之处还请指出。</p>
+<p><strong>参考</strong></p>
+<p><em><a href="http://blog.oneapm.com/apm-tech/226.html" target="_blank" rel="external">深入探索Java 8 Lambda表达式</a></em><br><em><a href="https://juejin.im/entry/58a382da61ff4b0058ab4542" target="_blank" rel="external">细说 Kotlin 的 Lambda 表达式</a></em><br><em><a href="http://www.kotlincn.net/docs/reference/lambdas.html#%E9%AB%98%E9%98%B6%E5%87%BD%E6%95%B0" target="_blank" rel="external">官方文档</a></em></p>
+]]></content>
+    
+    <summary type="html">
+    
+      &lt;h1 id=&quot;前言&quot;&gt;&lt;a href=&quot;#前言&quot; class=&quot;headerlink&quot; title=&quot;前言&quot;&gt;&lt;/a&gt;前言&lt;/h1&gt;&lt;p&gt;kotlin 在 lambda 的使用上是很频繁的。&lt;a href=&quot;http://www.kotlincn.net/docs/refere
+    
+    </summary>
+    
+      <category term="kotlin" scheme="https://maintel.github.io/categories/kotlin/"/>
+    
+    
+      <category term="kotlin" scheme="https://maintel.github.io/tags/kotlin/"/>
+    
+      <category term="高阶函数" scheme="https://maintel.github.io/tags/%E9%AB%98%E9%98%B6%E5%87%BD%E6%95%B0/"/>
+    
+      <category term="lambda表达式" scheme="https://maintel.github.io/tags/lambda%E8%A1%A8%E8%BE%BE%E5%BC%8F/"/>
     
   </entry>
   
@@ -1296,55 +1403,6 @@ strategy mechanism. You can inspect the dependency tree by running ./gradlew :ap
       <category term="JNI" scheme="https://maintel.github.io/tags/JNI/"/>
     
       <category term="NKD" scheme="https://maintel.github.io/tags/NKD/"/>
-    
-  </entry>
-  
-  <entry>
-    <title>小心JNI中的内存泄露</title>
-    <link href="https://maintel.github.io//blog/2017/01/%E5%B0%8F%E5%BF%83JNI%E4%B8%AD%E7%9A%84%E5%86%85%E5%AD%98%E6%B3%84%E9%9C%B2.html"/>
-    <id>https://maintel.github.io//blog/2017/01/小心JNI中的内存泄露.html</id>
-    <published>2017-01-12T09:28:55.000Z</published>
-    <updated>2018-03-13T14:46:37.020Z</updated>
-    
-    <summary type="html">
-    
-    </summary>
-    
-    
-  </entry>
-  
-  <entry>
-    <title>Jni频繁资源未释放引起的崩溃问题</title>
-    <link href="https://maintel.github.io//blog/2017/01/Jni%E9%A2%91%E7%B9%81%E8%B5%84%E6%BA%90%E6%9C%AA%E9%87%8A%E6%94%BE%E5%BC%95%E8%B5%B7%E7%9A%84%E5%B4%A9%E6%BA%83%E9%97%AE%E9%A2%98.html"/>
-    <id>https://maintel.github.io//blog/2017/01/Jni频繁资源未释放引起的崩溃问题.html</id>
-    <published>2017-01-10T15:17:08.000Z</published>
-    <updated>2018-03-18T03:28:31.784Z</updated>
-    
-    <content type="html"><![CDATA[<h1 id="Failed-adding-to-JNI-pinned-array-ref-table-1024-entries"><a href="#Failed-adding-to-JNI-pinned-array-ref-table-1024-entries" class="headerlink" title="Failed adding to JNI pinned array ref table (1024 entries)"></a>Failed adding to JNI pinned array ref table (1024 entries)</h1><p><strong>问题重现:</strong></p>
-<p>在开发蓝牙模块升级的时候， 由于要传送的升级文件较大，所以需要频繁的通过JNI调用C语言来组装报文，结果在低版本手机测试时遇到<code>Failed adding to JNI pinned array ref table (1024 entries)</code>.</p>
-<a id="more"></a>
-<p><strong>错误代码：</strong></p>
-<figure class="highlight c"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div></pre></td><td class="code"><pre><div class="line"><span class="function">JNIEXPORT jbyteArray JNICALL <span class="title">xxx_BleUtils_sendUpdatePkt</span><span class="params">(</span></span></div><div class="line">        JNIEnv *env, jclass jobj, jbyteArray pkt, jint pkt_sn, jint pktLen, jint token</div><div class="line">) &#123;</div><div class="line">    <span class="keyword">unsigned</span> <span class="keyword">long</span> outbuf[APPAPI_MAXSENDLEN / <span class="number">4</span>];</div><div class="line">    <span class="keyword">unsigned</span> <span class="keyword">char</span> *pBuffer = (*env)-&gt;GetByteArrayElements(env, pkt, <span class="literal">NULL</span>);   <span class="comment">//&lt;==引起错误的地方</span></div><div class="line">    <span class="keyword">int</span> ret = ynLockSendPkt((<span class="keyword">uint16_t</span>) token, (<span class="keyword">uint16_t</span>) pkt_sn, pktLen,</div><div class="line">                            pBuffer,</div><div class="line">                            (<span class="keyword">char</span> *) outbuf,</div><div class="line">                            APPAPI_MAXSENDLEN);</div><div class="line">    jbyteArray <span class="built_in">array</span> = (*env)-&gt;NewByteArray(env, ret);</div><div class="line">    (*env)-&gt;SetByteArrayRegion(env, <span class="built_in">array</span>, <span class="number">0</span>, ret, outbuf);</div><div class="line">    <span class="keyword">return</span> <span class="built_in">array</span>;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
-<p><strong>原因：</strong></p>
-<p>运行 native method 的线程的堆栈记录着 Local Reference 表的内存位置（指针 p），Local Reference表中存放JNI Local Reference实现 Local Reference 到 Java 对象的映射，函数中调用的<code>GetByteArrayElements()</code>会使Local Reference表中的存放的指针加一，频繁的调用而得不到释放的话表中的值就会一直增加，直至内存被占满引起崩溃。</p>
-<p><strong>解决方法：</strong></p>
-<p>在函数中<code>return</code>前释放资源：</p>
-<figure class="highlight c"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">(*env)-&gt;ReleaseByteArrayElements(env,pkt, pBuffer, <span class="number">0</span>); <span class="comment">//pkt为java层传递过来的数组，pBuffer为指针</span></div></pre></td></tr></table></figure>
-<p>由于是在JNI层发生的错误，而且项目只是集成了bugly在Java层面的错误收集，所以一直找不到崩溃原因，最后不得不找了同型号的手机来测试几遍才发现问题,看来BUG收集也要尽善尽美才行啊，不能偷懒。</p>
-<p>只在低配手机出现没有在高配手机出现的原因应该是高配手机分配的内存更大。但是这里的内存只要不被释放，当以后升级包更大的时候总有一天高配手机也会出现问题的。</p>
-]]></content>
-    
-    <summary type="html">
-    
-      &lt;h1 id=&quot;Failed-adding-to-JNI-pinned-array-ref-table-1024-entries&quot;&gt;&lt;a href=&quot;#Failed-adding-to-JNI-pinned-array-ref-table-1024-entries&quot; class=&quot;headerlink&quot; title=&quot;Failed adding to JNI pinned array ref table (1024 entries)&quot;&gt;&lt;/a&gt;Failed adding to JNI pinned array ref table (1024 entries)&lt;/h1&gt;&lt;p&gt;&lt;strong&gt;问题重现:&lt;/strong&gt;&lt;/p&gt;
-&lt;p&gt;在开发蓝牙模块升级的时候， 由于要传送的升级文件较大，所以需要频繁的通过JNI调用C语言来组装报文，结果在低版本手机测试时遇到&lt;code&gt;Failed adding to JNI pinned array ref table (1024 entries)&lt;/code&gt;.&lt;/p&gt;
-    
-    </summary>
-    
-      <category term="Android" scheme="https://maintel.github.io/categories/Android/"/>
-    
-    
-      <category term="JNI" scheme="https://maintel.github.io/tags/JNI/"/>
     
   </entry>
   

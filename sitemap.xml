@@ -2,16 +2,30 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   
   <url>
-    <loc>https://maintel.github.io/blog/2018/03/RxJava%E6%93%8D%E4%BD%9C%E7%AC%A6.html</loc>
+    <loc>https://maintel.github.io/blog/2018/02/kotlin%E5%AE%9E%E7%8E%B0%E5%9B%9E%E8%B0%83%E7%9B%91%E5%90%AC.html</loc>
     
-    <lastmod>2018-03-22T16:55:52.195Z</lastmod>
+    <lastmod>2018-03-22T17:22:31.262Z</lastmod>
+    
+  </url>
+  
+  <url>
+    <loc>https://maintel.github.io/blog/2018/02/kotlin-Lambda%E8%A1%A8%E8%BE%BE%E5%BC%8F%E5%92%8C%E9%AB%98%E9%98%B6%E5%87%BD%E6%95%B0.html</loc>
+    
+    <lastmod>2018-03-22T17:21:17.126Z</lastmod>
     
   </url>
   
   <url>
     <loc>https://maintel.github.io/blog/2018/03/RxJava%E6%93%8D%E4%BD%9C%E7%AC%A62.html</loc>
     
-    <lastmod>2018-03-22T16:55:13.049Z</lastmod>
+    <lastmod>2018-03-22T17:21:08.807Z</lastmod>
+    
+  </url>
+  
+  <url>
+    <loc>https://maintel.github.io/blog/2018/03/RxJava%E6%93%8D%E4%BD%9C%E7%AC%A6.html</loc>
+    
+    <lastmod>2018-03-22T16:55:52.195Z</lastmod>
     
   </url>
   
